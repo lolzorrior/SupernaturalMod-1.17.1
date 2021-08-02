@@ -116,12 +116,12 @@ public class PowerUsePacket {
                             sender.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
 
                             Vec3 vector3d = sender.getViewVector(1.0F);
-                            double d2 = sender.getX() - (sender.getX() + vector3d.x * 4.0D);
-                            double d3 = sender.getY(0.5D) - (0.5D + sender.getY(0.5D));
-                            double d4 = sender.getZ() - (sender.getZ() + vector3d.z * 4.0D);
+                            double d2 = vector3d.x * 4.0D;
+                            double d3 = vector3d.y * 4.0D;
+                            double d4 = vector3d.z * 4.0D;
 
                             LargeFireball fireballentity = new LargeFireball(sender.level, sender, d2, d3, d4, 1);
-                            fireballentity.setPos(sender.getX() + vector3d.x * 4.0D, sender.getY(0.5D) + 0.5D, fireballentity.getZ() + vector3d.z * 4.0D);
+                            fireballentity.setPos(sender.getX(), sender.getY(0.5D), fireballentity.getZ());
                             sender.level.addFreshEntity(fireballentity);
 
                             sender.sendMessage(new TextComponent("You have " + sender.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
