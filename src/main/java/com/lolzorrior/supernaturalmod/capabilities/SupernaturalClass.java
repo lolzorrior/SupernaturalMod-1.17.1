@@ -1,15 +1,32 @@
 package com.lolzorrior.supernaturalmod.capabilities;
 
-import io.netty.buffer.
+import io.netty.buffer.ByteBuf;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.minecraftforge.fmllegacy.network.PacketDispatcher;
+import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassStorage.*;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.image.DataBufferByte;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
-public class SupernaturalClass implements ISupernaturalClass {
-    private String supernaturalClass;
-    private int power;
+public class SupernaturalClass implements ISupernaturalClass{
+
+    @CapabilityInject(ISupernaturalClass.class)
+    public static Capability<ISupernaturalClass> SCLASS = null;
+
+    protected String sClass;
+    protected int sPower;
 
     public static String[] SUPERNATURAL_CLASSES = {
             "Human",
@@ -22,60 +39,83 @@ public class SupernaturalClass implements ISupernaturalClass {
             "Zombie"
     };
 
-    public SupernaturalClass() {
-        this.setSupernaturalClass("Human");
-        this.power = 0;
+
+    public static void register()
+    {
+        CapabilityManager.INSTANCE.register(ISupernaturalClass.class);
     }
 
-    public SupernaturalClass(String sclass, int power){
-        this.setSupernaturalClass(sclass);
-        this.set(power);
+    public static void encode(SupernaturalClass msg, ByteBuf buf){
+        int sClassLength = buf.writeCharSequence(msg.sClass, StandardCharsets.UTF_8);
+        buf.writeInt(sClassLength);
+        buf.writeInt(msg.sPower);
     }
 
-    @Override
-    public void setSupernaturalClass(String classes) {
-        this.supernaturalClass = classes;
-    }
-
-    @Override
-    public String getSupernaturalClass() {
-        return supernaturalClass;
-    }
-
-
-    public void consume(int points) {
-        this.power -= points;
-        if (this.power < 0) this.power = 0;
-    }
-
-    @Override
-    public void fill(int points) {
-        this.power += points;
-    }
-
-    public void set(int points) {
-        this.power = points;
-    }
-
-    public int getPower() {
-        return this.power;
-    }
-
-    public static void encode(WrappedCompositeByteBuff buf){
-        buf.writeString(msg.supernaturalClass);
-        buf.writeInt(msg.power);
-    }
-
-    public static SupernaturalClass decode(PacketBuffer buf){
-        return new SupernaturalClass(buf.readString(), buf.readInt());
+    public static SupernaturalClass decode(ByteBuf buf){
+        return new SupernaturalClass((String) (buf.readCharSequence(buf.readInt(), StandardCharsets.UTF_8)), buf.readInt());
     }
 
     public static void handle(SupernaturalClass msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             // Work that needs to be threadsafe (most work)
-            ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
+            Player sender = ctx.get().getSender(); // the client that sent this packet
             // do stuff
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    public void setSupernaturalClass(String classes) {
+        sClass = classes;
+    }
+
+    public String getSupernaturalClass() {
+        return sClass;
+    }
+
+    @Override
+    public void consumePower(int points) {
+        if (sPower >= points) {
+            sPower = sPower - points;
+        }
+    }
+
+    @Override
+    public void fillPower(int points) {
+        if ((sPower < 2000) && (sPower + points <= 2000)) {
+            sPower = sPower + points;
+        } else {
+            sPower = 2000;
+        }
+    }
+
+    @Override
+    public void setPower(int points) {
+        if (points > 2000) {
+            sPower = 2000;
+        } else {
+            sPower = points;
+        }
+    }
+
+    @Override
+    public int getPower() {
+        return sPower;
+    }
+
+    SupernaturalClass() {
+        setSupernaturalClass("Human");
+        setPower(0);
+    }
+
+    SupernaturalClass(String isClass, int isPower) {
+        setSupernaturalClass(isClass);
+        setPower(isPower);
+    }
+
+}
+
+ class SupernaturalFactory implements Callable<ISupernaturalClass> {
+    public ISupernaturalClass call() throws Exception {
+        return new SupernaturalClass();
     }
 }

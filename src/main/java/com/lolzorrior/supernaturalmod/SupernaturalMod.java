@@ -1,11 +1,10 @@
 package com.lolzorrior.supernaturalmod;
 
+import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
+import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.AbstractGlassBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,11 +15,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,16 +38,15 @@ public class SupernaturalMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeEventSubscriber::onCommonSetup);
         MinecraftForge.EVENT_BUS.register(new ForgeEventSubscriber());
-        supernaturalPacketHndler.register();
-
+        SupernaturalPacketHandler.register();
     }
 
     private void setup(FMLCommonSetupEvent event) {
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        SupernaturalClass.register();
         LOGGER.info("Capabilities registered");
     }
 
@@ -82,7 +76,6 @@ public class SupernaturalMod {
         LOGGER.info("HELLO from server starting");
 
     }
-
 
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
