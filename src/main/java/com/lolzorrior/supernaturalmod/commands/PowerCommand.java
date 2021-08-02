@@ -2,10 +2,13 @@ package com.lolzorrior.supernaturalmod.commands;
 
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
@@ -19,8 +22,8 @@ public class PowerCommand {
     }
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("supernatural").then((Commands.literal("power")).executes((powerGet -> getPowerEcho(powerGet.getSource()))).then(Commands.argument("power", IntegerArgumentType.integer())
-                .executes((p_198496_0_) -> setPower(p_198496_0_.getSource(), IntegerArgumentType.getInteger(p_198496_0_, "power"))))));
+        dispatcher.register(Commands.literal("supernatural").then((Commands.literal("power")).then(Commands.literal("get").executes(powerGet -> getPowerEcho(powerGet.getSource()))).then(Commands.literal("set").then(Commands.argument("power", IntegerArgumentType.integer())
+                .executes((p_198496_0_) -> setPower(p_198496_0_.getSource(), IntegerArgumentType.getInteger(p_198496_0_, "power")))))));
         LOGGER.info("Power Command Registered.");
     }
 

@@ -32,7 +32,7 @@ public class ClassCommand {
                     }
                     return 0;
                 })));
-        LOGGER.info("Power Command Registered.");
+        LOGGER.info("Class Command Registered.");
     }
 
     private static String getClass(CommandSourceStack source) {
