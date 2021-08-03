@@ -280,7 +280,7 @@ public class ForgeEventSubscriber {
     }
 
     @SubscribeEvent
-    public void wolfTargetsWerewolf(LivingAttackEvent event) {
+    public void wolfAttacksWerewolf(LivingAttackEvent event) {
         if (event.getEntity().level.isClientSide()) {
             return;
         }
@@ -293,10 +293,9 @@ public class ForgeEventSubscriber {
         if (!(event.getSource().getEntity() instanceof Wolf)) {
             return;
         }
-        ((Wolf) event.getSource().getEntity()).setPersistentAngerTarget(null);
-        ((Wolf) event.getSource().getEntity()).setRemainingPersistentAngerTime(0);
         event.setCanceled(true);
     }
+
 
     @SubscribeEvent
     public void wolfTargetingEvent(LivingSetAttackTargetEvent event) {
@@ -310,7 +309,8 @@ public class ForgeEventSubscriber {
             return;
         }
         ((Wolf) event.getEntity()).setPersistentAngerTarget(null);
-        ((Wolf) event.getEntity()).setRemainingPersistentAngerTime(0);
+        ((Wolf) event.getEntity()).setTarget(null);
+        ((Wolf) event.getEntity()).setRemainingPersistentAngerTime(1);
     }
 
     @SubscribeEvent
