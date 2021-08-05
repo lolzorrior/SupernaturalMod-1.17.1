@@ -1,3 +1,6 @@
 {
-  "commands.supernaturalmod.power.set": "Power is set to: {0}"
+  "commands.supernaturalmod.power.set": "Power is set to: {0}",
+  "commands.supernaturalmod.power.get": "Power is: {0}",
+  "commands.supernaturalmod.class.set": "Class is set to: {0}",
+  "commands.supernaturalmod.class.get": "Class is: {0}"
 }
