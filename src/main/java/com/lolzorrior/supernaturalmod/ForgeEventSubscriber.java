@@ -21,6 +21,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -328,7 +329,7 @@ public class ForgeEventSubscriber {
     }
 
     @SubscribeEvent
-    public void wolfHunt(PlayerInteractEvent.RightClickEmpty event) {
+    public void levelOneSpell(PlayerInteractEvent.RightClickEmpty event) {
         if (!event.getEntity().level.isClientSide()) {
             return;
         }
@@ -354,4 +355,21 @@ public class ForgeEventSubscriber {
         creature.getKillCredit().sendMessage(new TextComponent("You take a bite from the creatures corpse. Updated power: " + creature.getKillCredit().getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower()), creature.getKillCredit().getUUID());
     }
 
+    @SubscribeEvent
+    public void onHumanMounts(EntityMountEvent event) {
+        if (event.getEntity().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getEntityMounting() instanceof Player)) {
+            return;
+        }
+        if (event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass() == "Human") {
+            String setClass = "Knight";
+            int powerToAdd = 50;
+            event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
+            event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
+            event.getEntityMounting().sendMessage(new TextComponent("Updated Power: " + (event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+            event.getEntityMounting().sendMessage(new TextComponent("Your class is " + event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
+        }
+    }
 }
