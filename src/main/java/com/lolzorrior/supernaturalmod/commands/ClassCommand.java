@@ -14,8 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLASS;
-import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SUPERNATURAL_CLASSES;
+import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.*;
 
 public class ClassCommand {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -28,7 +27,7 @@ public class ClassCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("supernatural").then((Commands.literal("class")).then(Commands.literal("get").executes(classGet -> getClassEcho(classGet.getSource())))
                 .then((Commands.literal("set")).then(Commands.argument("class", StringArgumentType.string()).executes((p_198496_0_) -> {
-                    if (Arrays.asList(SUPERNATURAL_CLASSES).contains(StringArgumentType.getString(p_198496_0_, "class"))) {
+                    if (Arrays.asList(SUPERNATURAL_CLASSES_LIST).contains(StringArgumentType.getString(p_198496_0_, "class"))) {
                         setClass(p_198496_0_.getSource(), StringArgumentType.getString(p_198496_0_, "class"));
                         return 0;
                     }

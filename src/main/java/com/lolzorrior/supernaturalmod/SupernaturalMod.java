@@ -15,11 +15,15 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
+import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.stream.Collectors;
+
+import static com.lolzorrior.supernaturalmod.SupernaturalRegistry.SUPERNATURAL_CLASSES;
 
 
 //private static final DeferredRegister BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
@@ -32,6 +36,17 @@ public class SupernaturalMod {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ResourceLocation SUPER_CLASS = new ResourceLocation(MOD_ID, "superclass");
 
+    private static final DeferredRegister SUPER_CLASSES_DF = DeferredRegister.create(SupernaturalClass.class, MOD_ID);
+    public static final RegistryObject HUMAN = SUPER_CLASSES_DF.register("human", () -> new SupernaturalClass("Human"));
+    public static final RegistryObject MONK = SUPER_CLASSES_DF.register("monk", () -> new SupernaturalClass("Monk"));
+    public static final RegistryObject DEMON = SUPER_CLASSES_DF.register("demon", () -> new SupernaturalClass("Demon"));
+    public static final RegistryObject WEREWOLF = SUPER_CLASSES_DF.register("werewolf", () -> new SupernaturalClass("Werewolf"));
+    public static final RegistryObject WITCHHUNTER = SUPER_CLASSES_DF.register("witchhunter", () -> new SupernaturalClass("Witch Hunter"));
+    public static final RegistryObject MAGE = SUPER_CLASSES_DF.register("mage", () -> new SupernaturalClass("Mage"));
+    public static final RegistryObject WARLOCK = SUPER_CLASSES_DF.register("warlock", () -> new SupernaturalClass("Warlock"));
+    public static final RegistryObject ZOMBIE = SUPER_CLASSES_DF.register("zombie", () -> new SupernaturalClass("Zombie"));
+    public static final RegistryObject KNIGHT = SUPER_CLASSES_DF.register("knight", () -> new SupernaturalClass("Knight"));
+
     public SupernaturalMod() {
         MinecraftForge.EVENT_BUS.register(this);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -40,6 +55,8 @@ public class SupernaturalMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         MinecraftForge.EVENT_BUS.register(new ForgeEventSubscriber());
         SupernaturalPacketHandler.register();
+        SUPER_CLASSES_DF.makeRegistry(MOD_ID, () -> new RegistryBuilder<>());
+        SUPER_CLASSES_DF.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void setup(FMLCommonSetupEvent event) {
@@ -87,6 +104,7 @@ public class SupernaturalMod {
             // register a new block here
             LOGGER.info("HELLO from Register Block");
         }
+
     }
 }
 

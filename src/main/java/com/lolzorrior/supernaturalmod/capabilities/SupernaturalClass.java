@@ -1,26 +1,18 @@
 package com.lolzorrior.supernaturalmod.capabilities;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
-import net.minecraftforge.fmllegacy.network.PacketDispatcher;
-import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassStorage.*;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.image.DataBufferByte;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
-public class SupernaturalClass implements ISupernaturalClass{
+public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> implements ISupernaturalClass{
 
     @CapabilityInject(ISupernaturalClass.class)
     public static Capability<ISupernaturalClass> SCLASS = null;
@@ -28,7 +20,7 @@ public class SupernaturalClass implements ISupernaturalClass{
     protected String sClass;
     protected int sPower;
 
-    public static String[] SUPERNATURAL_CLASSES = {
+    public static String[] SUPERNATURAL_CLASSES_LIST = {
             "Human",
             "Monk",
             "Demon",
@@ -36,7 +28,8 @@ public class SupernaturalClass implements ISupernaturalClass{
             "Witch Hunter",
             "Mage",
             "Warlock",
-            "Zombie"
+            "Zombie",
+            "Knight"
     };
 
 
@@ -102,12 +95,17 @@ public class SupernaturalClass implements ISupernaturalClass{
         return sPower;
     }
 
-    SupernaturalClass() {
+    public SupernaturalClass() {
         setSupernaturalClass("Human");
         setPower(0);
     }
 
-    SupernaturalClass(String isClass, int isPower) {
+    public SupernaturalClass(String isClass) {
+        setSupernaturalClass(isClass);
+        setPower(0);
+    }
+
+    public SupernaturalClass(String isClass, int isPower) {
         setSupernaturalClass(isClass);
         setPower(isPower);
     }
