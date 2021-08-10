@@ -4,12 +4,12 @@ package com.lolzorrior.supernaturalmod;
 import com.lolzorrior.supernaturalmod.capabilities.ISupernaturalClass;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassStorage;
-import com.lolzorrior.supernaturalmod.capabilities.SupernaturalUtils;
 import com.lolzorrior.supernaturalmod.commands.ClassCommand;
 import com.lolzorrior.supernaturalmod.commands.PowerCommand;
 import com.lolzorrior.supernaturalmod.networking.PowerUpdatePacket;
 import com.lolzorrior.supernaturalmod.networking.PowerUsePacket;
 import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -17,12 +17,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.RegistryEvent.NewRegistry;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -31,11 +34,16 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static com.lolzorrior.supernaturalmod.SupernaturalMod.MOD_ID;
 import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLASS;
+import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SUPERNATURAL_CLASSES_LIST;
 
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventSubscriber {
@@ -52,7 +60,8 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
-        SupernaturalUtils.checkClientPlayer(event.getObject());
+        if (event.getObject().level.isClientSide()) {return;}
+        if (!(event.getObject() instanceof Player)) {return;}
         Player player = (Player) event.getObject();
         if (!(player.getCapability(SupernaturalClass.SCLASS).isPresent())){
             event.addCapability(SupernaturalMod.SUPER_CLASS, new SupernaturalClassStorage());
@@ -95,7 +104,12 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void onPlayerEatsFlesh(LivingEntityUseItemEvent.Finish event) {
-        SupernaturalUtils.checkClientPlayer(event.getEntity());
+        if (!event.getEntity().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getEntityLiving() instanceof Player)) {
+            return;
+        }
         if (!(event.getItem().getItem() == Items.ROTTEN_FLESH)) {
             return;
         }
@@ -107,7 +121,12 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void onPlayerKillsMob(LivingDeathEvent event) {
-        SupernaturalUtils.checkClientPlayer(event.getEntityLiving());
+        if (event.getEntity().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getEntityLiving().getKillCredit() instanceof Player)) {
+            return;
+        }
         LivingEntity player = event.getEntityLiving().getKillCredit();
         int powerToAdd = 50;
         if (!(event.getEntityLiving().getLastDamageSource().isProjectile())) {
@@ -144,7 +163,12 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void onPlayerBecomesDemon(LivingHurtEvent event) {
-        SupernaturalUtils.checkClientPlayer(event.getEntityLiving());
+        if (event.getEntity().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getEntityLiving() instanceof  Player)) {
+            return;
+        }
         if (!(event.getSource().isFire())) {
             return;
         }
@@ -168,7 +192,12 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void onPlayerBecomesWerewolf(LivingHurtEvent event) {
-        SupernaturalUtils.checkClientPlayer(event.getEntityLiving());
+        if (event.getEntity().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getEntityLiving() instanceof  Player)) {
+            return;
+        }
         if (!(event.getSource().getEntity() instanceof Wolf)) {
             return;
         }
@@ -189,7 +218,9 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void onPlayerBecomesMage(PlayerInteractEvent.RightClickItem event) {
-        SupernaturalUtils.checkClientSide(event.getPlayer());
+        if (event.getEntity().level.isClientSide()) {
+            return;
+        }
         Player player = event.getPlayer();
         int powerToAdd = 50;
         if (event.getPlayer().getMainHandItem().getItem() == Items.LAPIS_BLOCK) {
@@ -212,7 +243,9 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void onPlayerBecomesWarlock(PlayerInteractEvent.RightClickItem event) {
-        SupernaturalUtils.checkClientSide(event.getPlayer());
+        if (event.getEntity().level.isClientSide()) {
+            return;
+        }
         Player player = event.getPlayer();
         int powerToAdd = 50;
         if (event.getPlayer().getMainHandItem().getItem() == Items.REDSTONE_BLOCK) {
@@ -235,7 +268,9 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void onPlayerBecomesMonk(LivingDeathEvent event) {
-        SupernaturalUtils.checkClientSide(event.getEntityLiving().getKillCredit());
+        if (!(event.getEntityLiving().getKillCredit() instanceof Player)) {
+            return;
+        }
         LivingEntity player = event.getEntityLiving().getKillCredit();
         int powerToAdd = 50;
         if (!(player.getMainHandItem().isEmpty())) {
@@ -257,7 +292,12 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void wolfAttacksWerewolf(LivingAttackEvent event) {
-        SupernaturalUtils.checkClientSide(event.getEntityLiving());
+        if (event.getEntity().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getEntityLiving() instanceof Player)) {
+            return;
+        }
         if (!(event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Werewolf"))) {
             return;
         }
@@ -273,7 +313,9 @@ public class ForgeEventSubscriber {
         if (!(event.getEntity() instanceof Wolf)) {
             return;
         }
-        SupernaturalUtils.checkClientPlayer(event.getTarget());
+        if (!(event.getTarget() instanceof Player)) {
+            return;
+        }
         if (!(event.getTarget().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Werewolf"))) {
             return;
         }
@@ -287,7 +329,9 @@ public class ForgeEventSubscriber {
         if (!(event.getEntity() instanceof Zombie)) {
             return;
         }
-        SupernaturalUtils.checkClientPlayer(event.getTarget());
+        if (!(event.getTarget() instanceof Player)) {
+            return;
+        }
         if (!(event.getTarget().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Zombie"))) {
             return;
         }
@@ -296,7 +340,9 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void levelOneSpell(PlayerInteractEvent.RightClickEmpty event) {
-        if (SupernaturalUtils.checkClientSide(event.getPlayer()));
+        if (!event.getEntity().level.isClientSide()) {
+            return;
+        }
         if (!event.getPlayer().getMainHandItem().isEmpty()) {
             return;
         }
@@ -306,7 +352,9 @@ public class ForgeEventSubscriber {
     @SubscribeEvent
     public void consume(LivingDeathEvent event) {
         LivingEntity creature = event.getEntityLiving();
-        SupernaturalUtils.checkClientPlayer(event.getSource().getEntity());
+        if (!(creature.getKillCredit() instanceof Player)) {
+            return;
+        }
         if (!(creature instanceof LivingEntity)) {
             return;
         }
@@ -319,7 +367,12 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void onHumanMounts(EntityMountEvent event) {
-        SupernaturalUtils.checkClientPlayer(event.getEntityMounting());
+        if (event.getEntity().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getEntityMounting() instanceof Player)) {
+            return;
+        }
         if (event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass() == "Human") {
             String setClass = "Knight";
             int powerToAdd = 50;
