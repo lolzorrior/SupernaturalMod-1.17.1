@@ -23,13 +23,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.stream.Collectors;
 
-import static com.lolzorrior.supernaturalmod.SupernaturalRegistry.SUPERNATURAL_CLASSES;
-
-
-//private static final DeferredRegister BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-//DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-
-
 @Mod("supernaturalmod")
 public class SupernaturalMod {
     public static final String MOD_ID = "supernaturalmod";
