@@ -3,7 +3,6 @@ package com.lolzorrior.supernaturalmod;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
 import net.minecraft.server.Bootstrap;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
