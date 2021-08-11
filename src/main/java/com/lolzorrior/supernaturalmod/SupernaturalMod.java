@@ -1,11 +1,21 @@
 package com.lolzorrior.supernaturalmod;
 
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
+import com.lolzorrior.supernaturalmod.items.RangedClassBookContainer;
+import com.lolzorrior.supernaturalmod.items.RangedClassBookItem;
+import com.lolzorrior.supernaturalmod.items.RangedClassBookScreen;
 import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
+import com.mojang.blaze3d.platform.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -21,24 +31,32 @@ import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
 import java.util.stream.Collectors;
 
-@Mod("supernaturalmod")
+import static com.lolzorrior.supernaturalmod.SupernaturalMod.MOD_ID;
+
+@Mod(MOD_ID)
 public class SupernaturalMod {
     public static final String MOD_ID = "supernaturalmod";
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ResourceLocation SUPER_CLASS = new ResourceLocation(MOD_ID, "superclass");
 
-    private static final DeferredRegister SUPER_CLASSES_DF = DeferredRegister.create(SupernaturalClass.class, MOD_ID);
-    public static final RegistryObject HUMAN = SUPER_CLASSES_DF.register("human", () -> new SupernaturalClass("Human"));
-    public static final RegistryObject MONK = SUPER_CLASSES_DF.register("monk", () -> new SupernaturalClass("Monk"));
-    public static final RegistryObject DEMON = SUPER_CLASSES_DF.register("demon", () -> new SupernaturalClass("Demon"));
-    public static final RegistryObject WEREWOLF = SUPER_CLASSES_DF.register("werewolf", () -> new SupernaturalClass("Werewolf"));
-    public static final RegistryObject WITCHHUNTER = SUPER_CLASSES_DF.register("witchhunter", () -> new SupernaturalClass("Witch Hunter"));
-    public static final RegistryObject MAGE = SUPER_CLASSES_DF.register("mage", () -> new SupernaturalClass("Mage"));
-    public static final RegistryObject WARLOCK = SUPER_CLASSES_DF.register("warlock", () -> new SupernaturalClass("Warlock"));
-    public static final RegistryObject ZOMBIE = SUPER_CLASSES_DF.register("zombie", () -> new SupernaturalClass("Zombie"));
-    public static final RegistryObject KNIGHT = SUPER_CLASSES_DF.register("knight", () -> new SupernaturalClass("Knight"));
+    private static final DeferredRegister CLASSES = DeferredRegister.create(SupernaturalClass.class, MOD_ID);
+    private static final DeferredRegister ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
+    private static final DeferredRegister CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, MOD_ID);
+
+    public static final RegistryObject HUMAN = CLASSES.register("human", () -> new SupernaturalClass("Human"));
+    public static final RegistryObject MONK = CLASSES.register("monk", () -> new SupernaturalClass("Monk"));
+    public static final RegistryObject DEMON = CLASSES.register("demon", () -> new SupernaturalClass("Demon"));
+    public static final RegistryObject WEREWOLF = CLASSES.register("werewolf", () -> new SupernaturalClass("Werewolf"));
+    public static final RegistryObject WITCHHUNTER = CLASSES.register("witch_hunter", () -> new SupernaturalClass("Witch Hunter"));
+    public static final RegistryObject MAGE = CLASSES.register("mage", () -> new SupernaturalClass("Mage"));
+    public static final RegistryObject WARLOCK = CLASSES.register("warlock", () -> new SupernaturalClass("Warlock"));
+    public static final RegistryObject ZOMBIE = CLASSES.register("zombie", () -> new SupernaturalClass("Zombie"));
+    public static final RegistryObject KNIGHT = CLASSES.register("knight", () -> new SupernaturalClass("Knight"));
+    public static final RegistryObject RANGEDCLASSBOOKITEM = ITEMS.register("ranged_class_book_item", () -> new RangedClassBookItem(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
+    public static final RegistryObject RANGEDCLASSBOOKCONTAINER = CONTAINERS.register("ranged_class_book_container", () -> IForgeContainerType.create(((windowId, inv, data) -> new RangedClassBookContainer(windowId, inv))));
 
     public SupernaturalMod() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -48,8 +66,10 @@ public class SupernaturalMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         MinecraftForge.EVENT_BUS.register(new ForgeEventSubscriber());
         SupernaturalPacketHandler.register();
-        SUPER_CLASSES_DF.makeRegistry(MOD_ID, () -> new RegistryBuilder<>());
-        SUPER_CLASSES_DF.register(FMLJavaModLoadingContext.get().getModEventBus());
+        CLASSES.makeRegistry(MOD_ID, () -> new RegistryBuilder<>());
+        CLASSES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void setup(FMLCommonSetupEvent event) {
@@ -62,6 +82,9 @@ public class SupernaturalMod {
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
+        event.enqueueWork(() -> {
+            MenuScreens.register(RangedClassBookContainer.TYPE, RangedClassBookScreen::new);
+        });
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

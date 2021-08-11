@@ -22,5 +22,6 @@ public class SupernaturalPacketHandler {
         channel.registerMessage(id++, SupernaturalClass.class, SupernaturalClass::encode, SupernaturalClass::decode, SupernaturalClass::handle);
         channel.registerMessage(id++, PowerUpdatePacket.class, PowerUpdatePacket::encode, PowerUpdatePacket::decode, PowerUpdatePacket::handle);
         channel.registerMessage(id++, PowerUsePacket.class, PowerUsePacket::encode, PowerUsePacket::decode, PowerUsePacket::handle);
+        channel.registerMessage(id++, OpenBookMenuPacket.class, OpenBookMenuPacket::encode, OpenBookMenuPacket::new, OpenBookMenuPacket::handle);
     }
 }

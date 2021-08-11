@@ -6,10 +6,16 @@ import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassStorage;
 import com.lolzorrior.supernaturalmod.commands.ClassCommand;
 import com.lolzorrior.supernaturalmod.commands.PowerCommand;
+import com.lolzorrior.supernaturalmod.items.RangedClassBookContainer;
+import com.lolzorrior.supernaturalmod.items.RangedClassBookItem;
+import com.lolzorrior.supernaturalmod.items.RangedClassBookScreen;
+import com.lolzorrior.supernaturalmod.networking.OpenBookMenuPacket;
 import com.lolzorrior.supernaturalmod.networking.PowerUpdatePacket;
 import com.lolzorrior.supernaturalmod.networking.PowerUsePacket;
 import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,6 +24,8 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -30,6 +38,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -371,6 +380,13 @@ public class ForgeEventSubscriber {
             event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
             event.getEntityMounting().sendMessage(new TextComponent("Updated Power: " + (event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
             event.getEntityMounting().sendMessage(new TextComponent("Your class is " + event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
+        }
+    }
+
+    @SubscribeEvent
+    public void onRangedBookGui(PlayerInteractEvent.RightClickItem event) {
+        if (event.getItemStack().getItem() instanceof RangedClassBookItem) {
+            SupernaturalPacketHandler.channel.sendToServer(new OpenBookMenuPacket());
         }
     }
 }
