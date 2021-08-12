@@ -1,32 +1,25 @@
 package com.lolzorrior.supernaturalmod.items;
 
 import com.google.common.collect.ImmutableList;
-import com.lolzorrior.supernaturalmod.ForgeEventSubscriber;
-import com.lolzorrior.supernaturalmod.SupernaturalMod;
-import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
+import com.lolzorrior.supernaturalmod.networking.PowerUpdatePacket;
+import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.minecraft.client.gui.screens.inventory.PageButton;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 
-import static com.lolzorrior.supernaturalmod.SupernaturalMod.RANGEDCLASSBOOKITEM;
-import static com.lolzorrior.supernaturalmod.SupernaturalMod.SUPER_CLASS;
 
 public class RangedClassBookScreen extends BookViewScreen implements MenuAccess<RangedClassBookContainer> {
     private final RangedClassBookContainer menu;
-    private PageButton rangerButton;
-    private PageButton whButton;
+    private Button rangerButton;
+    private Button whButton;
     private Inventory playerInv;
 
     public RangedClassBookScreen(RangedClassBookContainer bookMenu, Inventory inv, Component component) {
@@ -69,27 +62,19 @@ public class RangedClassBookScreen extends BookViewScreen implements MenuAccess<
     }
 
     protected void createClassChangeButtons() {
+
         int var1 = (this.width - 192) / 2;
-        this.whButton = (PageButton)this.addRenderableWidget(new PageButton(var1 + 116, 130, true, (pb) -> {
-            this.selectWitchHunter();
-        }, true));
-        this.rangerButton =(PageButton)this.addRenderableWidget(new PageButton(var1 + 116, 130, true, (pb) -> {
-            this.selectRanger();
-        }, true));
+        this.whButton = this.addRenderableWidget(new Button(var1 + 50, 40, 75, 10, new TranslatableComponent("supernaturalmod.witch_hunter"), b -> selectWitchHunter(), (a, b, c, d) -> {new TranslatableComponent("supernaturalmod.witch_hunter");}));
+        this.whButton = this.addRenderableWidget(new Button(var1 + 50, 100, 75, 10, new TranslatableComponent("supernaturalmod.ranger"), b -> selectRanger(), (a, b, c, d) -> {new TranslatableComponent("supernaturalmod.ranger");}));
+
     }
 
     protected void selectWitchHunter() {
-        if (playerInv.player.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass() == "Human") {
-            playerInv.player.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass("Witch Hunter");
-        }
-        playerInv.removeItem(playerInv.player.getMainHandItem());
+        SupernaturalPacketHandler.channel.sendToServer(new PowerUpdatePacket(0, "Witch Hunter"));
     }
 
     protected void selectRanger() {
-        if (playerInv.player.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass() == "Human") {
-            playerInv.player.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass("Ranger");
-        }
-        playerInv.removeItem(playerInv.player.getMainHandItem());
+        SupernaturalPacketHandler.channel.sendToServer(new PowerUpdatePacket(0, "Ranger"));
     }
 
     protected void init() {
