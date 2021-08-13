@@ -10,16 +10,10 @@ import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fmllegacy.RegistryObject;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.List;
 
@@ -104,24 +98,6 @@ public class RangedClassBookScreen extends BookViewScreen implements MenuAccess<
             }
         }
         return super.mouseClicked(p_98272_, p_98273_, p_98274_);
-    }
-
-    @Override
-    public boolean handleComponentClicked(Style p_98293_) {
-        ClickEvent var2 = p_98293_.getClickEvent();
-        if (var2 == null) {
-            return false;
-        } else if (var2.getAction() == ClickEvent.Action.RUN_COMMAND) {
-            this.closeScreen();
-            return true;
-        } else {
-            boolean var3 = super.handleComponentClicked(p_98293_);
-            if (var3 && var2.getAction() == ClickEvent.Action.RUN_COMMAND) {
-                this.closeScreen();
-            }
-
-            return var3;
-        }
     }
 }
 
