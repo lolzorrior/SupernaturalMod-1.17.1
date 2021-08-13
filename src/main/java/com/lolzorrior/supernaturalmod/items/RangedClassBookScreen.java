@@ -1,6 +1,8 @@
 package com.lolzorrior.supernaturalmod.items;
 
 import com.google.common.collect.ImmutableList;
+import com.lolzorrior.supernaturalmod.SupernaturalMod;
+import com.lolzorrior.supernaturalmod.networking.InventoryPacket;
 import com.lolzorrior.supernaturalmod.networking.PowerUpdatePacket;
 import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
 import net.minecraft.client.gui.components.Button;
@@ -8,10 +10,16 @@ import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.List;
 
@@ -71,10 +79,14 @@ public class RangedClassBookScreen extends BookViewScreen implements MenuAccess<
 
     protected void selectWitchHunter() {
         SupernaturalPacketHandler.channel.sendToServer(new PowerUpdatePacket(0, "Witch Hunter"));
+        SupernaturalPacketHandler.channel.sendToServer(new InventoryPacket(playerInv.selected));
+        this.closeScreen();
     }
 
     protected void selectRanger() {
         SupernaturalPacketHandler.channel.sendToServer(new PowerUpdatePacket(0, "Ranger"));
+        SupernaturalPacketHandler.channel.sendToServer(new InventoryPacket(playerInv.selected));
+        this.closeScreen();
     }
 
     protected void init() {
