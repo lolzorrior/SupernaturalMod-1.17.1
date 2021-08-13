@@ -80,12 +80,14 @@ public class RangedClassBookScreen extends BookViewScreen implements MenuAccess<
     protected void selectWitchHunter() {
         SupernaturalPacketHandler.channel.sendToServer(new PowerUpdatePacket(0, "Witch Hunter"));
         SupernaturalPacketHandler.channel.sendToServer(new InventoryPacket(playerInv.selected));
+        playerInv.removeItem(playerInv.player.getMainHandItem());
         this.closeScreen();
     }
 
     protected void selectRanger() {
         SupernaturalPacketHandler.channel.sendToServer(new PowerUpdatePacket(0, "Ranger"));
         SupernaturalPacketHandler.channel.sendToServer(new InventoryPacket(playerInv.selected));
+        playerInv.removeItem(playerInv.player.getMainHandItem());
         this.closeScreen();
     }
 
