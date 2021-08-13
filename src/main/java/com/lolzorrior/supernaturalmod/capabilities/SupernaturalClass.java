@@ -9,6 +9,9 @@ import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
@@ -20,17 +23,8 @@ public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> imp
     protected String sClass;
     protected int sPower;
 
-    public static String[] SUPERNATURAL_CLASSES_LIST = {
-            "Human",
-            "Monk",
-            "Demon",
-            "Werewolf",
-            "Witch Hunter",
-            "Mage",
-            "Warlock",
-            "Zombie",
-            "Knight"
-    };
+    public static Set<String> SUPERNATURAL_CLASSES_LIST = Set.of("Human", "Witch Hunter", "Zombie", "Demon",
+            "Werewolf", "Mage", "Warlock", "Monk", "Night", "Ranger", "Rogue", "Apothecary");
 
 
     public static void register()
