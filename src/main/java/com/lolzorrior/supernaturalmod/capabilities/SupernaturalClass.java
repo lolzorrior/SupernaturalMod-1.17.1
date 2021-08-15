@@ -29,7 +29,10 @@ public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> imp
             "Mage",
             "Warlock",
             "Zombie",
-            "Knight"
+            "Knight",
+            "Ranger",
+            "Rogue",
+            "Apothecary"
     };
 
 

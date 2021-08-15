@@ -1,7 +1,6 @@
 package com.lolzorrior.supernaturalmod.common;
 
 import com.lolzorrior.supernaturalmod.items.RangedClassBookContainer;
-import com.lolzorrior.supernaturalmod.items.RangedClassBookItem;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;

@@ -2,12 +2,19 @@ package com.lolzorrior.supernaturalmod.networking;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.PacketUtils;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
@@ -139,6 +146,7 @@ public class PowerUsePacket {
                                 if (sender.getVehicle() instanceof LivingEntity) {
                                     sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
                                     ((LivingEntity) sender.getVehicle()).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
+                                    sender.sendMessage(new TranslatableComponent("message.supernatural.mount_speed_used"), sender.getUUID());
                                 } else {
                                     sender.sendMessage(new TextComponent("Mount up Knight"), sender.getUUID());
                                 }
@@ -147,6 +155,39 @@ public class PowerUsePacket {
                             }
                         }
                         break;
+                    }
+                    case "Ranger": {
+                        if (sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() >= 50) {
+                            sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
+                            Wolf wolf = new Wolf(EntityType.WOLF, sender.level);
+                            ctx.get().getSender().server.overworld().addFreshEntity(wolf);
+                            wolf.tame(sender);
+                            wolf.teleportTo(sender.getX(), sender.getY(), sender.getZ());
+                            sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
+                        } else {
+                            sender.sendMessage(new TextComponent("Not enough power."), sender.getUUID());
+                        }
+                    }
+                    case "Rogue": {
+                        if (sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() >= 50) {
+                            sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
+                            ItemStack potion = Items.SPLASH_POTION.getDefaultInstance();
+                            PotionUtils.setPotion(potion, Potions.POISON);
+                            sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
+                            sender.addItem(potion);
+                            sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
+                        } else {
+                            sender.sendMessage(new TextComponent("Not enough power."), sender.getUUID());
+                            }
+                        }
+                    case "Apothecary": {
+                        if (sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() >= 50) {
+                            sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
+                            sender.addItem(Items.BREWING_STAND.getDefaultInstance());
+                            sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
+                        } else {
+                            sender.sendMessage(new TextComponent("Not enough power."), sender.getUUID());
+                        }
                     }
                     default: {
                         break;

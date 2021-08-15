@@ -29,6 +29,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -42,6 +43,11 @@ import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
+
+import java.awt.event.*;
+import java.util.EventListener;
+
 import static com.lolzorrior.supernaturalmod.SupernaturalMod.MOD_ID;
 import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLASS;
 
@@ -49,6 +55,8 @@ import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLA
 public class ForgeEventSubscriber {
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
+    private int cooldown = 5000;
+
 
 
     @SubscribeEvent
@@ -347,6 +355,7 @@ public class ForgeEventSubscriber {
             return;
         }
         SupernaturalPacketHandler.channel.sendToServer(new PowerUsePacket(1));
+
     }
 
     @SubscribeEvent
@@ -373,7 +382,7 @@ public class ForgeEventSubscriber {
         if (!(event.getEntityMounting() instanceof Player)) {
             return;
         }
-        if (event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass() == "Human") {
+        if (event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Human")) {
             String setClass = "Knight";
             int powerToAdd = 50;
             event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
@@ -389,4 +398,20 @@ public class ForgeEventSubscriber {
             SupernaturalPacketHandler.channel.sendToServer(new OpenBookMenuPacket());
         }
     }
+
+    @SubscribeEvent
+    public void onPlayerDrinksPotion(PotionEvent.PotionAddedEvent event) {
+        if (event.getEntityLiving().level.isClientSide()) {
+            return;
+        }
+        if (event.getEntityLiving() instanceof Player) {
+            if (event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Human")) {
+                event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(50);
+                event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass("Apothecary");
+                event.getEntityLiving().sendMessage(new TextComponent("Updated Power: " + (event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+                event.getEntityLiving().sendMessage(new TextComponent("Your class is " + event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
+            }
+        }
+    }
 }
+
