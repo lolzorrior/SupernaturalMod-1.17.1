@@ -5,5 +5,7 @@
   "commands.supernaturalmod.class.get": "Class is: {0}",
   "items.supernaturalmod.ranged_book": "Ranged Class Book",
   "items.supernaturalmod.ranged_book.menu": "Ranged Book Menu",
-  "items.supernaturalmod.ranged_book.container": "Ranged Book Container"
+  "items.supernaturalmod.ranged_book.container": "Ranged Book Container",
+  "supernaturalmod.witch_hunter": "Witch Hunter",
+  "supernaturalmod.ranger": "Ranger"
 }

@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
+import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SUPERNATURAL_CLASSES_LIST;
+
 public class PowerUpdatePacket {
     private static final Logger LOGGER = LogManager.getLogger();
     int power = 0;
@@ -26,15 +28,20 @@ public class PowerUpdatePacket {
     }
 
     public static void encode(PowerUpdatePacket msg, ByteBuf buf) {
+        int stringLength = msg.sClass.length();
+        buf.writeInt(stringLength);
         buf.writeInt(msg.power);
-        int isClass = buf.writeCharSequence(msg.sClass, StandardCharsets.UTF_8);
-        buf.writeInt(isClass);
+        buf.writeCharSequence(msg.sClass, StandardCharsets.UTF_8);
+
         LOGGER.info("Encoding Power: " + msg.power);
     }
 
     public static PowerUpdatePacket decode(ByteBuf buf) {
+        int sLength = buf.readInt();
+        int iPower = buf.readInt();
+        String sClass = (String) buf.readCharSequence(sLength, StandardCharsets.UTF_8);
         LOGGER.info("Decoding Power");
-        return new PowerUpdatePacket(buf.readInt(), (String) buf.readCharSequence(buf.readInt(), StandardCharsets.UTF_8));
+        return new PowerUpdatePacket(iPower, sClass);
     }
 
     public static void handle(PowerUpdatePacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -55,8 +62,8 @@ public class PowerUpdatePacket {
             }
             else if (stringClass.equals(msg.sClass)) {
                 sclass.fillPower(msg.power);
-                sender.sendMessage(new TextComponent("Your power is now: " + sclass.getPower()),sender.getUUID());
             }
+            sender.sendMessage(new TextComponent("Your power is now: " + sclass.getPower()),sender.getUUID());
             LOGGER.info("Power Updated: " + sclass.getPower());
         });
         ctx.get().setPacketHandled(true);
