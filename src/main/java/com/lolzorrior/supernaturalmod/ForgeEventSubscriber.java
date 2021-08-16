@@ -55,7 +55,7 @@ import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLA
 public class ForgeEventSubscriber {
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
-    private int cooldown = 5000;
+    private long systemTime = System.currentTimeMillis();
 
 
 
@@ -354,8 +354,12 @@ public class ForgeEventSubscriber {
         if (!event.getPlayer().getMainHandItem().isEmpty()) {
             return;
         }
+        if (System.currentTimeMillis() < systemTime + 5000) {
+            event.getPlayer().sendMessage(new TranslatableComponent("message.supernatural.on_cooldown"), event.getPlayer().getUUID());
+            return;
+        }
         SupernaturalPacketHandler.channel.sendToServer(new PowerUsePacket(1));
-
+        systemTime = System.currentTimeMillis();
     }
 
     @SubscribeEvent
