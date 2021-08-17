@@ -1,5 +1,6 @@
 package com.lolzorrior.supernaturalmod.networking;
 
+import com.lolzorrior.supernaturalmod.capabilities.ISupernaturalClass;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -15,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
@@ -48,118 +50,125 @@ public class PowerUsePacket {
                 return;
             }
             // do stuff
+            ISupernaturalClass capability = sender.getCapability(SCLASS).orElseThrow(NullPointerException::new);
             if (!(sender.level.isClientSide())) {
-                switch (msg.powerUsed)
-                {
-                    case 1: {
-                        if (sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() < 50) {
-                            sender.sendMessage(new TranslatableComponent("message.supernatural.not_enough_power"), sender.getUUID());
-                            return;
-                        }
-                        switch (sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()) {
-                            case "Werewolf": {
-                                sender.sendMessage(new TextComponent("The hunt is on!"), sender.getUUID());
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                sender.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 3600));
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
+                if (capability.getLastSpell() + 5000 <= System.currentTimeMillis()) {
+                    capability.setLastSpell();
+                    switch (msg.powerUsed)
+                    {
+                        case 1: {
+                            if (capability.getPower() < 50) {
+                                sender.sendMessage(new TranslatableComponent("message.supernatural.not_enough_power"), sender.getUUID());
+                                return;
                             }
-                            case "Monk": {
-                                    sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                    sender.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 200, 3));
-                                    sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            case "Witch Hunter": {
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                sender.addItem(Items.CROSSBOW.getDefaultInstance());
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            case "Zombie": {
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                sender.addEffect(new MobEffectInstance(MobEffects.GLOWING, 200, 3));
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            case "Demon": {
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                sender.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 3));
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            case "Warlock": {
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                sender.addEffect(new MobEffectInstance(MobEffects.HEAL, 0, 1));
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            case "Mage": {
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-
-                                Vec3 vector3d = sender.getViewVector(1.0F);
-                                double d2 = vector3d.x * 4.0D;
-                                double d3 = vector3d.y * 4.0D;
-                                double d4 = vector3d.z * 4.0D;
-
-                                LargeFireball fireballentity = new LargeFireball(sender.level, sender, d2, d3, d4, 1);
-                                fireballentity.setPos(sender.getX(), sender.getY(0.5D), fireballentity.getZ());
-                                sender.level.addFreshEntity(fireballentity);
-
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            case "Human": {
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                sender.addEffect(new MobEffectInstance(MobEffects.LUCK, 200, 1));
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            case "Knight": {
-                                if (sender.isPassenger()) {
-                                    if (sender.getVehicle() instanceof LivingEntity) {
-                                        sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                        ((LivingEntity) sender.getVehicle()).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
-                                        sender.sendMessage(new TranslatableComponent("message.supernatural.mount_speed_used"), sender.getUUID());
-                                    } else {
-                                        sender.sendMessage(new TextComponent("Mount up Knight"), sender.getUUID());
-                                    }
+                            switch (capability.getSupernaturalClass()) {
+                                case "Werewolf": {
+                                    sender.sendMessage(new TextComponent("The hunt is on!"), sender.getUUID());
+                                    capability.consumePower(50);
+                                    sender.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 3600));
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
                                 }
-                                break;
+                                case "Monk": {
+                                    capability.consumePower(50);
+                                    sender.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 200, 3));
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                case "Witch Hunter": {
+                                    capability.consumePower(50);
+                                    sender.addItem(Items.CROSSBOW.getDefaultInstance());
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                case "Zombie": {
+                                    capability.consumePower(50);
+                                    sender.addEffect(new MobEffectInstance(MobEffects.GLOWING, 200, 3));
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                case "Demon": {
+                                    capability.consumePower(50);
+                                    sender.level.explode(sender, sender.getX(), sender.getY(), sender.getZ(), 3.0f, Explosion.BlockInteraction.BREAK);
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                case "Warlock": {
+                                    capability.consumePower(50);
+                                    sender.addEffect(new MobEffectInstance(MobEffects.HEAL, 0, 1));
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                case "Mage": {
+                                    capability.consumePower(50);
+
+                                    Vec3 vector3d = sender.getViewVector(1.0F);
+                                    double d2 = vector3d.x * 4.0D;
+                                    double d3 = vector3d.y * 4.0D;
+                                    double d4 = vector3d.z * 4.0D;
+
+                                    LargeFireball fireballentity = new LargeFireball(sender.level, sender, d2, d3, d4, 1);
+                                    fireballentity.setPos(sender.getX(), sender.getY(0.5D), fireballentity.getZ());
+                                    sender.level.addFreshEntity(fireballentity);
+
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                case "Human": {
+                                    capability.consumePower(50);
+                                    sender.addEffect(new MobEffectInstance(MobEffects.LUCK, 200, 1));
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                case "Knight": {
+                                    if (sender.isPassenger()) {
+                                        if (sender.getVehicle() instanceof LivingEntity) {
+                                            capability.consumePower(50);
+                                            ((LivingEntity) sender.getVehicle()).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
+                                            sender.sendMessage(new TranslatableComponent("message.supernatural.mount_speed_used"), sender.getUUID());
+                                        } else {
+                                            sender.sendMessage(new TextComponent("Mount up Knight"), sender.getUUID());
+                                        }
+                                    }
+                                    break;
+                                }
+                                case "Ranger": {
+                                    capability.consumePower(50);
+                                    Wolf wolf = new Wolf(EntityType.WOLF, sender.level);
+                                    ctx.get().getSender().server.overworld().addFreshEntity(wolf);
+                                    wolf.tame(sender);
+                                    wolf.teleportTo(sender.getX(), sender.getY(), sender.getZ());
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                case "Rogue": {
+                                    capability.consumePower(50);
+                                    ItemStack potion = Items.SPLASH_POTION.getDefaultInstance();
+                                    PotionUtils.setPotion(potion, Potions.POISON);
+                                    capability.consumePower(50);
+                                    sender.addItem(potion);
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                case "Apothecary": {
+                                    capability.consumePower(50);
+                                    sender.addItem(Items.BREWING_STAND.getDefaultInstance());
+                                    sender.sendMessage(new TextComponent("You have " + capability.getPower() + " power left."), sender.getUUID());
+                                    break;
+                                }
+                                default: {
+                                    break;
+                                }
                             }
-                            case "Ranger": {
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                Wolf wolf = new Wolf(EntityType.WOLF, sender.level);
-                                ctx.get().getSender().server.overworld().addFreshEntity(wolf);
-                                wolf.tame(sender);
-                                wolf.teleportTo(sender.getX(), sender.getY(), sender.getZ());
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            case "Rogue": {
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                ItemStack potion = Items.SPLASH_POTION.getDefaultInstance();
-                                PotionUtils.setPotion(potion, Potions.POISON);
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                sender.addItem(potion);
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            case "Apothecary": {
-                                sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).consumePower(50);
-                                sender.addItem(Items.BREWING_STAND.getDefaultInstance());
-                                sender.sendMessage(new TextComponent("You have " + sender.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower() + " power left."), sender.getUUID());
-                                break;
-                            }
-                            default: {
-                                break;
-                            }
+                            break;
                         }
-                        break;
+                        default: {
+                            break;
+                        }
                     }
-                    default: {
-                        break;
-                    }
+                } else {
+                    int i = (int) ((capability.getLastSpell() + 5000) - System.currentTimeMillis())/1000;
+                    sender.sendMessage(new TranslatableComponent("message.supernatural.on_cooldown", i), sender.getUUID());
                 }
             }
         });

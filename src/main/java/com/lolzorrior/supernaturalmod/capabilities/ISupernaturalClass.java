@@ -7,5 +7,7 @@ public interface ISupernaturalClass {
     int getPower();
     void setSupernaturalClass(String classes);
     String getSupernaturalClass();
+    void setLastSpell();
+    long getLastSpell();
 
 }

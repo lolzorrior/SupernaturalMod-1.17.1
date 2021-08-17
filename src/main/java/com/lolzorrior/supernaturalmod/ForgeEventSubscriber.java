@@ -15,6 +15,7 @@ import com.lolzorrior.supernaturalmod.networking.PowerUsePacket;
 import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,16 +23,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -185,7 +187,7 @@ public class ForgeEventSubscriber {
             event.setCanceled(true);
             return;
         }
-        if (!(event.getEntityLiving().getItemBySlot(EquipmentSlot.CHEST).equals(new ItemStack(Items.LEATHER_CHESTPLATE)))) {
+        if (!(((ArmorItem) (player.getItemBySlot(EquipmentSlot.CHEST).getItem())).getMaterial() == ArmorMaterials.LEATHER)) {
             return;
         }
         else if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Human")) {
@@ -354,12 +356,10 @@ public class ForgeEventSubscriber {
         if (!event.getPlayer().getMainHandItem().isEmpty()) {
             return;
         }
-        if (System.currentTimeMillis() < systemTime + 5000) {
-            event.getPlayer().sendMessage(new TranslatableComponent("message.supernatural.on_cooldown"), event.getPlayer().getUUID());
+        if (event.getHand() ==  InteractionHand.OFF_HAND) {
             return;
         }
         SupernaturalPacketHandler.channel.sendToServer(new PowerUsePacket(1));
-        systemTime = System.currentTimeMillis();
     }
 
     @SubscribeEvent
@@ -404,8 +404,11 @@ public class ForgeEventSubscriber {
     }
 
     @SubscribeEvent
-    public void onPlayerDrinksPotion(PotionEvent.PotionAddedEvent event) {
+    public void onPlayerDrinksPotion(EntityItemPickupEvent event) {
         if (event.getEntityLiving().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getItem().getItem().getItem() instanceof PotionItem)) {
             return;
         }
         if (event.getEntityLiving() instanceof Player) {

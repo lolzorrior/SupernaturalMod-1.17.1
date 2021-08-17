@@ -19,6 +19,7 @@ public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> imp
 
     protected String sClass;
     protected int sPower;
+    protected long lastSpell;
 
     public static String[] SUPERNATURAL_CLASSES_LIST = {
             "Human",
@@ -67,6 +68,10 @@ public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> imp
     public String getSupernaturalClass() {
         return sClass;
     }
+
+    public long getLastSpell() {return  lastSpell;}
+
+    public void setLastSpell() {lastSpell = System.currentTimeMillis();}
 
     @Override
     public void consumePower(int points) {
