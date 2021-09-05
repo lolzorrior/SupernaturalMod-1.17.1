@@ -17,6 +17,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -139,6 +140,9 @@ public class ForgeEventSubscriber {
         }
         LivingEntity player = event.getEntityLiving().getKillCredit();
         int powerToAdd = 50;
+        if (event.getEntityLiving().getLastDamageSource() == null) {
+            return;
+        }
         if (!(event.getEntityLiving().getLastDamageSource().isProjectile())) {
             return;
         }
@@ -284,7 +288,6 @@ public class ForgeEventSubscriber {
         LivingEntity player = event.getEntityLiving().getKillCredit();
         int powerToAdd = 50;
         if (!(player.getMainHandItem().isEmpty())) {
-            player.sendMessage(new TextComponent("Hand isn't empty."), event.getEntity().getUUID());
             return;
         }
         if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Monk")) {
@@ -417,6 +420,44 @@ public class ForgeEventSubscriber {
                 event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass("Apothecary");
                 event.getEntityLiving().sendMessage(new TextComponent("Updated Power: " + (event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
                 event.getEntityLiving().sendMessage(new TextComponent("Your class is " + event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onRangedDamage(LivingDamageEvent event) {
+        if (event.getEntityLiving().level.isClientSide()) {
+            return;
+        }
+        if (!event.getSource().isProjectile()) {
+            return;
+        }
+        if (!(event.getSource().getEntity() instanceof Player)) {
+            return;
+        }
+        if (!((event.getSource().getEntity()).getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Ranger"))
+                || (event.getSource().getEntity().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Witch Hunter"))) {
+
+        }
+        event.setAmount(event.getAmount() + 2.0f);
+        event.getSource().getEntity().sendMessage(new TranslatableComponent("ranged.supernatural.damage", event.getAmount()), event.getSource().getEntity().getUUID());
+    }
+
+    @SubscribeEvent
+    public static void onFistDamage(LivingDamageEvent event) {
+        if (event.getEntityLiving().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getSource().getEntity() instanceof Player)) {
+            return;
+        }
+        Player damager = (Player) event.getSource().getEntity();
+        if (event.getSource().equals(event.getSource().equals(DamageSource.playerAttack(damager)))) {
+            if (damager.getMainHandItem().isEmpty()) {
+                if (damager.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Monk")) {
+                    event.setAmount(event.getAmount() + 1.0f);
+                    damager.sendMessage(new TranslatableComponent("melee.supernatural.damaged", event.getAmount()), damager.getUUID());
+                }
             }
         }
     }

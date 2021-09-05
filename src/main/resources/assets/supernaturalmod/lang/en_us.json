@@ -8,5 +8,7 @@
   "items.supernaturalmod.ranged_book.container": "Ranged Book Container",
   "supernaturalmod.witch_hunter": "Witch Hunter",
   "supernaturalmod.ranger": "Ranger",
-  "message.supernatural.on_cooldown": "Spells on cooldown for, {0} seconds."
+  "message.supernatural.on_cooldown": "Spells on cooldown for, {0} seconds.",
+  "ranged.supernatural.damage": "Ranged Damage: {0}",
+  "melee.supernatural.damage": "Melee Damage: {0}"
 }
