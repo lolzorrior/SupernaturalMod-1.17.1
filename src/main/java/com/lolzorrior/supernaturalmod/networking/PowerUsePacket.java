@@ -168,7 +168,7 @@ public class PowerUsePacket {
                     }
                 } else {
                     int i = (int) ((capability.getLastSpell() + 5000) - System.currentTimeMillis())/1000;
-                    sender.sendMessage(new TranslatableComponent("message.supernatural.on_cooldown", i), sender.getUUID());
+                    sender.sendMessage(new TranslatableComponent("message.supernaturalmod.on_cooldown", i), sender.getUUID());
                 }
             }
         });

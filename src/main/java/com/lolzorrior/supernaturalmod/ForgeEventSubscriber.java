@@ -13,11 +13,14 @@ import com.lolzorrior.supernaturalmod.networking.OpenBookMenuPacket;
 import com.lolzorrior.supernaturalmod.networking.PowerUpdatePacket;
 import com.lolzorrior.supernaturalmod.networking.PowerUsePacket;
 import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
+import com.lolzorrior.supernaturalmod.util.CommonUtil;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -148,14 +151,14 @@ public class ForgeEventSubscriber {
         }
         if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Witch Hunter")) {
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-            player.sendMessage(new TextComponent("Updated Power: " + (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+            CommonUtil.PowerUpdateMessage(player);
             return;
         }
         else if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Human")) {
             String setClass = "Witch Hunter";
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
-            player.sendMessage(new TextComponent("Updated Power: " + (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+            CommonUtil.PowerUpdateMessage(player);
             player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
         }
     }
@@ -199,7 +202,7 @@ public class ForgeEventSubscriber {
             String setClass = "Demon";
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
-            player.sendMessage(new TextComponent("Updated Power: " + (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+            CommonUtil.PowerUpdateMessage(player);
             player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
         }
     }
@@ -225,7 +228,7 @@ public class ForgeEventSubscriber {
             String setClass = "Werewolf";
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
-            player.sendMessage(new TextComponent("Updated Power: " + (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+            CommonUtil.PowerUpdateMessage(player);
             player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
         }
     }
@@ -241,13 +244,13 @@ public class ForgeEventSubscriber {
             if (event.getSide() == LogicalSide.SERVER) {
                 if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Mage")) {
                     player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-                    player.sendMessage(new TextComponent("Updated Power: " + (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+                    CommonUtil.PowerUpdateMessage(player);
                     event.getPlayer().getInventory().removeItem(event.getItemStack());
                 } else if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Human")) {
                     String setClass = "Mage";
                     player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
                     player.getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
-                    player.sendMessage(new TextComponent("Updated Power: " + (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+                    CommonUtil.PowerUpdateMessage(player);
                     player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
                     event.getPlayer().getInventory().removeItem(event.getItemStack());
                 }
@@ -272,7 +275,7 @@ public class ForgeEventSubscriber {
                     String setClass = "Warlock";
                     player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
                     player.getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
-                    player.sendMessage(new TextComponent("Updated Power: " + (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+                    CommonUtil.PowerUpdateMessage(player);
                     player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
                     event.getPlayer().getInventory().removeItem(event.getItemStack());
                 }
@@ -298,7 +301,7 @@ public class ForgeEventSubscriber {
             String setClass = "Monk";
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
-            player.sendMessage(new TextComponent("Updated Power: " + (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+            CommonUtil.PowerUpdateMessage(player);
             player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
         }
     }
@@ -394,7 +397,7 @@ public class ForgeEventSubscriber {
             int powerToAdd = 50;
             event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
             event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
-            event.getEntityMounting().sendMessage(new TextComponent("Updated Power: " + (event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+            CommonUtil.PowerUpdateMessage(event.getEntityMounting());
             event.getEntityMounting().sendMessage(new TextComponent("Your class is " + event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
         }
     }
@@ -418,7 +421,7 @@ public class ForgeEventSubscriber {
             if (event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Human")) {
                 event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(50);
                 event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).setSupernaturalClass("Apothecary");
-                event.getEntityLiving().sendMessage(new TextComponent("Updated Power: " + (event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+                CommonUtil.PowerUpdateMessage(event.getEntityLiving());
                 event.getEntityLiving().sendMessage(new TextComponent("Your class is " + event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()), event.getEntity().getUUID());
             }
         }
@@ -437,10 +440,10 @@ public class ForgeEventSubscriber {
         }
         if (!((event.getSource().getEntity()).getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Ranger"))
                 || (event.getSource().getEntity().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Witch Hunter"))) {
-
+            return;
         }
         event.setAmount(event.getAmount() + 2.0f);
-        event.getSource().getEntity().sendMessage(new TranslatableComponent("ranged.supernatural.damage", event.getAmount()), event.getSource().getEntity().getUUID());
+        event.getSource().getEntity().sendMessage(new TranslatableComponent("ranged.supernaturalmod.damage", event.getAmount()), event.getSource().getEntity().getUUID());
     }
 
     @SubscribeEvent
@@ -452,13 +455,43 @@ public class ForgeEventSubscriber {
             return;
         }
         Player damager = (Player) event.getSource().getEntity();
-        if (event.getSource().equals(event.getSource().equals(DamageSource.playerAttack(damager)))) {
-            if (damager.getMainHandItem().isEmpty()) {
-                if (damager.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Monk")) {
-                    event.setAmount(event.getAmount() + 1.0f);
-                    damager.sendMessage(new TranslatableComponent("melee.supernatural.damaged", event.getAmount()), damager.getUUID());
-                }
+        if (damager.getMainHandItem().isEmpty()) {
+            if (damager.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Monk")) {
+                event.setAmount(event.getAmount() + 1.0f);
+                damager.sendMessage(new TranslatableComponent("melee.supernaturalmod.damage", event.getAmount()), damager.getUUID());
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onWarlockDefeatsEnemy(LivingDeathEvent event) {
+        if (event.getEntityLiving().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getSource().getEntity() instanceof Player)) {
+            return;
+        }
+        Player damager = (Player) event.getSource().getEntity();
+        if (damager.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Warlock")) {
+            damager.heal(1.0f);
+            damager.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(50);
+            CommonUtil.PowerUpdateMessage(damager);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMageDefeatsEnemy(LivingDeathEvent event) {
+        if (event.getEntityLiving().level.isClientSide()) {
+            return;
+        }
+        if (!(event.getSource().getEntity() instanceof Player)) {
+            return;
+        }
+        Player damager = (Player) event.getSource().getEntity();
+        if (damager.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Mage")) {
+            damager.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 200));
+            damager.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(50);
+            CommonUtil.PowerUpdateMessage(damager);
         }
     }
 }
