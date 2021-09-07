@@ -5,6 +5,7 @@ import com.lolzorrior.supernaturalmod.items.RangedClassBookContainer;
 import com.lolzorrior.supernaturalmod.items.RangedClassBookItem;
 import com.lolzorrior.supernaturalmod.items.RangedClassBookScreen;
 import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
+import com.lolzorrior.supernaturalmod.util.HumanSeedsConverterModifier;
 import com.mojang.blaze3d.platform.ScreenManager;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
@@ -43,6 +44,9 @@ public class SupernaturalMod {
     private static final DeferredRegister CLASSES = DeferredRegister.create(SupernaturalClass.class, MOD_ID);
     private static final DeferredRegister ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     private static final DeferredRegister CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, MOD_ID);
+    private static final DeferredRegister LOOT = DeferredRegister.create(ForgeRegistries.LOOT_MODIFIER_SERIALIZERS, MOD_ID);
+
+    public static final RegistryObject HUMAN_SEED = LOOT.register("human_grass", () -> new HumanSeedsConverterModifier.Serializer());
 
     public static final RegistryObject HUMAN = CLASSES.register("human", () -> new SupernaturalClass("Human"));
     public static final RegistryObject MONK = CLASSES.register("monk", () -> new SupernaturalClass("Monk"));
@@ -68,6 +72,7 @@ public class SupernaturalMod {
         CLASSES.register(FMLJavaModLoadingContext.get().getModEventBus());
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        LOOT.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void setup(FMLCommonSetupEvent event) {

@@ -28,6 +28,8 @@ import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.property.Properties;
@@ -295,7 +297,7 @@ public class ForgeEventSubscriber {
         }
         if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Monk")) {
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-            player.sendMessage(new TextComponent("Updated Power: " + (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower())), event.getEntity().getUUID());
+            CommonUtil.PowerUpdateMessage(player);
             return;
         } else if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Human")) {
             String setClass = "Monk";
@@ -362,7 +364,9 @@ public class ForgeEventSubscriber {
         if (!event.getPlayer().getMainHandItem().isEmpty()) {
             return;
         }
-        if (event.getHand() ==  InteractionHand.OFF_HAND) {
+        if (System.currentTimeMillis() < systemTime + 5000) {
+            int i = (int)((systemTime + 5000) - System.currentTimeMillis());
+            event.getPlayer().sendMessage(new TranslatableComponent("message.supernatural.on_cooldown", i), event.getPlayer().getUUID());
             return;
         }
         SupernaturalPacketHandler.channel.sendToServer(new PowerUsePacket(1));
@@ -495,4 +499,5 @@ public class ForgeEventSubscriber {
         }
     }
 }
+
 

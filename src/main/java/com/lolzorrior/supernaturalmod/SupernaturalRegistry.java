@@ -1,6 +1,7 @@
 package com.lolzorrior.supernaturalmod;
 
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
+import com.lolzorrior.supernaturalmod.util.HumanSeedsConverterModifier;
 import net.minecraft.server.Bootstrap;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.GameData;
