@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -44,9 +45,10 @@ public class SupernaturalMod {
     private static final DeferredRegister CLASSES = DeferredRegister.create(SupernaturalClass.class, MOD_ID);
     private static final DeferredRegister ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     private static final DeferredRegister CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, MOD_ID);
-    private static final DeferredRegister LOOT = DeferredRegister.create(ForgeRegistries.LOOT_MODIFIER_SERIALIZERS, MOD_ID);
+    private static final DeferredRegister<GlobalLootModifierSerializer<?>> LOOT = DeferredRegister.create(ForgeRegistries.LOOT_MODIFIER_SERIALIZERS, MOD_ID);
 
-    public static final RegistryObject HUMAN_SEED = LOOT.register("human_grass", () -> new HumanSeedsConverterModifier.Serializer());
+
+    public static final RegistryObject<HumanSeedsConverterModifier.Serializer> HUMAN_SEED = LOOT.register("human_grass", HumanSeedsConverterModifier.Serializer::new);
 
     public static final RegistryObject HUMAN = CLASSES.register("human", () -> new SupernaturalClass("Human"));
     public static final RegistryObject MONK = CLASSES.register("monk", () -> new SupernaturalClass("Monk"));
