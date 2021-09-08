@@ -16,14 +16,16 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class HumanSeedsConverterModifier extends LootModifier {
-    public HumanSeedsConverterModifier(LootItemCondition[] conditionsIn) {
+    private final Item drop;
+    public HumanSeedsConverterModifier(LootItemCondition[] conditionsIn, Item itemIn) {
         super(conditionsIn);
+        drop = itemIn;
     }
 
     @Nonnull
     @Override
     protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-        generatedLoot.add(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft:seeds"))));
+        generatedLoot.add(new ItemStack(drop));
         return generatedLoot;
     }
 
@@ -32,14 +34,14 @@ public class HumanSeedsConverterModifier extends LootModifier {
         @Override
         public HumanSeedsConverterModifier read(ResourceLocation location, JsonObject object, LootItemCondition[] ailootcondition) {
             String type = object.get("type").getAsString();
-            //Item seed = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(object, "item")));
-            return new HumanSeedsConverterModifier(ailootcondition);
+            Item reward = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(object, "item")));
+            return new HumanSeedsConverterModifier(ailootcondition, reward);
         }
 
         @Override
         public JsonObject write(HumanSeedsConverterModifier instance) {
             JsonObject json = makeConditions(instance.conditions);
-            //json.addProperty("item", ForgeRegistries.ITEMS.getValue(instance.reward.getRegistryName()).toString());
+            json.addProperty("item", ForgeRegistries.ITEMS.getValue(instance.drop.getRegistryName()).toString());
             return json;
         }
     }
