@@ -4,6 +4,10 @@
     {
       "condition": "block_state_property",
       "block": "minecraft:grass"
+    },
+    {
+      "condition": "supernatural_class",
+      "class": "human"
     }
   ],
   "item": "wheat_seeds"
