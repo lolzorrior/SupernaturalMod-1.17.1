@@ -6,8 +6,8 @@
       "block": "minecraft:grass"
     },
     {
-      "condition": "supernatural_class",
-      "class": "human"
+      "condition": "supernaturalmod_class",
+      "entity": "this"
     }
   ],
   "item": "wheat_seeds"

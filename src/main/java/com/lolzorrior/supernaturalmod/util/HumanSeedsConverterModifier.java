@@ -1,6 +1,7 @@
 package com.lolzorrior.supernaturalmod.util;
 
 import com.google.gson.JsonObject;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

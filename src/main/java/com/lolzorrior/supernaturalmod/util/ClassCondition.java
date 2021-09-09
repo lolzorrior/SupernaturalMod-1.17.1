@@ -3,52 +3,54 @@ package com.lolzorrior.supernaturalmod.util;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.lolzorrior.supernaturalmod.SupernaturalMod;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.Serializer;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 
 import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLASS;
 
 public class ClassCondition implements LootItemCondition {
-    final EntityPredicate predicate;
-    final String sclass;
+    final LootContext.EntityTarget enT;
 
-    ClassCondition(EntityPredicate epin, String classIn) {
-        this.predicate = epin;
-        this.sclass = classIn;
+    ClassCondition(LootContext.EntityTarget enin) {
+        this.enT = enin;
     }
 
     @Override
     public LootItemConditionType getType() {
-        return SupernaturalMod.SUPERNATURAL_PROPERTIES;
+        return LootItemConditions.ENTITY_PROPERTIES;
     }
 
     @Override
     public boolean test(LootContext lootContext) {
-        String string = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY).getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass();
-        return string != null && string.equalsIgnoreCase("human");
+        String cclass = lootContext.getParamOrNull(this.enT.getParam()).getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass();
+        return cclass.equalsIgnoreCase("Human");
     }
 
+    public static LootItemCondition.Builder entityPresent(LootContext.EntityTarget p_81863_) {
+        return hasProperties(p_81863_);
+    }
+
+    public static LootItemCondition.Builder hasProperties(LootContext.EntityTarget p_81865_) {
+        return () -> {
+            return new ClassCondition(p_81865_);
+        };
+    }
     public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<ClassCondition> {
 
         @Override
         public void serialize(JsonObject p_79325_, ClassCondition p_79326_, JsonSerializationContext p_79327_) {
-            p_79325_.add("predicate", p_79326_.predicate.serializeToJson());
-            p_79325_.add("class", p_79327_.serialize(p_79326_.sclass));
+            p_79325_.add("entity", p_79327_.serialize(p_79326_.enT));
         }
 
         @Override
         public ClassCondition deserialize(JsonObject p_79323_, JsonDeserializationContext p_79324_) {
-            EntityPredicate entityPredicate = EntityPredicate.fromJson(p_79323_.get("predicate"));
-            return new ClassCondition(entityPredicate, GsonHelper.getAsString(p_79323_, "class"));
+            LootContext.EntityTarget eenT = GsonHelper.getAsObject(p_79323_, "entity", p_79324_, LootContext.EntityTarget.class);
+            return new ClassCondition(eenT);
         }
     }
 }
