@@ -5,7 +5,7 @@ import com.lolzorrior.supernaturalmod.items.RangedClassBookContainer;
 import com.lolzorrior.supernaturalmod.items.RangedClassBookItem;
 import com.lolzorrior.supernaturalmod.items.RangedClassBookScreen;
 import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
-import com.lolzorrior.supernaturalmod.util.HumanClassCondition;
+import com.lolzorrior.supernaturalmod.util.SupernaturalClassCondition;
 import com.lolzorrior.supernaturalmod.util.HumanSeedsConverterModifier;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.Registry;
@@ -47,7 +47,7 @@ public class SupernaturalMod {
     private static final DeferredRegister ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     private static final DeferredRegister CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, MOD_ID);
     private static final DeferredRegister<GlobalLootModifierSerializer<?>> LOOT = DeferredRegister.create(ForgeRegistries.LOOT_MODIFIER_SERIALIZERS, MOD_ID);
-    public static final LootItemConditionType SUPERNATURAL_HUMAN_CONDITION = Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("supernaturalmod_class"), new LootItemConditionType(new HumanClassCondition.Serializer()));
+    public static final LootItemConditionType SUPERNATURAL_HUMAN_CONDITION = Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("supernaturalmod_class"), new LootItemConditionType(new SupernaturalClassCondition.Serializer()));
 
     public static final RegistryObject<HumanSeedsConverterModifier.Serializer> HUMAN_SEED = LOOT.register("human_grass", HumanSeedsConverterModifier.Serializer::new);
 

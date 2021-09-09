@@ -11,11 +11,13 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 
 import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLASS;
 
-public class HumanClassCondition implements LootItemCondition {
+public class SupernaturalClassCondition implements LootItemCondition {
     final LootContext.EntityTarget enT;
+    final String sclass;
 
-    HumanClassCondition(LootContext.EntityTarget enin) {
+    SupernaturalClassCondition(LootContext.EntityTarget enin, String sclassIn) {
         this.enT = enin;
+        this.sclass = sclassIn;
     }
 
     @Override
@@ -26,29 +28,23 @@ public class HumanClassCondition implements LootItemCondition {
     @Override
     public boolean test(LootContext lootContext) {
         String cclass = lootContext.getParamOrNull(this.enT.getParam()).getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass();
-        return cclass.equalsIgnoreCase("Human");
+        return cclass.equalsIgnoreCase(sclass);
     }
 
-    public static LootItemCondition.Builder entityPresent(LootContext.EntityTarget p_81863_) {
-        return hasProperties(p_81863_);
-    }
 
-    public static LootItemCondition.Builder hasProperties(LootContext.EntityTarget p_81865_) {
-        return () -> {
-            return new HumanClassCondition(p_81865_);
-        };
-    }
-    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<HumanClassCondition> {
+    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<SupernaturalClassCondition> {
 
         @Override
-        public void serialize(JsonObject p_79325_, HumanClassCondition p_79326_, JsonSerializationContext p_79327_) {
+        public void serialize(JsonObject p_79325_, SupernaturalClassCondition p_79326_, JsonSerializationContext p_79327_) {
             p_79325_.add("entity", p_79327_.serialize(p_79326_.enT));
+            p_79325_.addProperty("class", p_79326_.sclass);
         }
 
         @Override
-        public HumanClassCondition deserialize(JsonObject p_79323_, JsonDeserializationContext p_79324_) {
+        public SupernaturalClassCondition deserialize(JsonObject p_79323_, JsonDeserializationContext p_79324_) {
             LootContext.EntityTarget eenT = GsonHelper.getAsObject(p_79323_, "entity", p_79324_, LootContext.EntityTarget.class);
-            return new HumanClassCondition(eenT);
+            String ssclass = GsonHelper.getAsString(p_79323_, "class");
+            return new SupernaturalClassCondition(eenT, ssclass);
         }
     }
 }

@@ -7,7 +7,8 @@
     },
     {
       "condition": "supernaturalmod_class",
-      "entity": "this"
+      "entity": "this",
+      "class": "human"
     }
   ],
   "item": "wheat_seeds"
