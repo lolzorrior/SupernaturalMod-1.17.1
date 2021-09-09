@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +24,9 @@ public class ClassCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("supernatural").then((Commands.literal("class")).then(Commands.literal("get").executes(classGet -> getClassEcho(classGet.getSource())))
-                .then((Commands.literal("set")).then(Commands.argument("class", StringArgumentType.string()).executes((p_198496_0_) -> {
+                .then((Commands.literal("set")).then(Commands.argument("class", StringArgumentType.string()).suggests((p_138084_, p_138085_) -> {
+                    return SharedSuggestionProvider.suggest(SUPERNATURAL_CLASSES_LIST, p_138085_);
+                }).executes((p_198496_0_) -> {
                     if (Arrays.asList(SUPERNATURAL_CLASSES_LIST).contains(StringArgumentType.getString(p_198496_0_, "class"))) {
                         setClass(p_198496_0_.getSource(), StringArgumentType.getString(p_198496_0_, "class"));
                         return 0;
