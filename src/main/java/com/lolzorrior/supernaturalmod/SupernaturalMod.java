@@ -1,6 +1,7 @@
 package com.lolzorrior.supernaturalmod;
 
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
+import com.lolzorrior.supernaturalmod.items.PowerCrystalItem;
 import com.lolzorrior.supernaturalmod.items.RangedClassBookContainer;
 import com.lolzorrior.supernaturalmod.items.RangedClassBookItem;
 import com.lolzorrior.supernaturalmod.items.RangedClassBookScreen;
@@ -62,6 +63,7 @@ public class SupernaturalMod {
     public static final RegistryObject KNIGHT = CLASSES.register("knight", () -> new SupernaturalClass("Knight"));
     public static final RegistryObject RANGEDCLASSBOOKITEM = ITEMS.register("ranged_class_book_item", () -> new RangedClassBookItem(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
     public static final RegistryObject RANGEDCLASSBOOKCONTAINER = CONTAINERS.register("ranged_class_book_container", () -> IForgeContainerType.create(((windowId, inv, data) -> new RangedClassBookContainer(windowId, inv))));
+    public static final RegistryObject POWERCRYSTALITEM = ITEMS.register("supernatural_crystal", () -> new PowerCrystalItem(new Item.Properties().stacksTo(16).tab(CreativeModeTab.TAB_MISC)));
 
     public SupernaturalMod() {
         MinecraftForge.EVENT_BUS.register(this);

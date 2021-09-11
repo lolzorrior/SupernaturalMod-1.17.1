@@ -6,6 +6,7 @@
   "items.supernaturalmod.ranged_book": "Ranged Class Book",
   "items.supernaturalmod.ranged_book.menu": "Ranged Book Menu",
   "items.supernaturalmod.ranged_book.container": "Ranged Book Container",
+  "items.supernaturalmod.supernatural_crystal": "Power Crystal",
   "supernaturalmod.witch_hunter": "Witch Hunter",
   "supernaturalmod.ranger": "Ranger",
   "message.supernaturalmod.on_cooldown": "Spells on cooldown for, {0} seconds.",
