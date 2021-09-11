@@ -46,9 +46,6 @@ public class PowerUsePacket {
         ctx.get().enqueueWork(() -> {
             // Work that needs to be threadsafe (most work)
             Player sender = ctx.get().getSender(); // the client that sent this packet
-            if (ctx.get().getDirection().getOriginationSide().isServer()) {
-                return;
-            }
             // do stuff
             ISupernaturalClass capability = sender.getCapability(SCLASS).orElseThrow(NullPointerException::new);
             if (!(sender.level.isClientSide())) {
@@ -161,6 +158,9 @@ public class PowerUsePacket {
                                 }
                             }
                             break;
+                        }
+                        case 2: {
+                            sender.sendMessage(new TextComponent("Level 2 power used."), sender.getUUID());
                         }
                         default: {
                             break;

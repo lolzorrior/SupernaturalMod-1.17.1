@@ -364,6 +364,9 @@ public class ForgeEventSubscriber {
         if (!event.getPlayer().getMainHandItem().isEmpty()) {
             return;
         }
+        if (event.getHand().equals(InteractionHand.OFF_HAND)) {
+            return;
+        }
         if (System.currentTimeMillis() < systemTime + 5000) {
             int i = (int)((systemTime + 5000) - System.currentTimeMillis());
             event.getPlayer().sendMessage(new TranslatableComponent("message.supernatural.on_cooldown", i), event.getPlayer().getUUID());

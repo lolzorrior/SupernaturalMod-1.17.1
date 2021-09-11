@@ -1,5 +1,8 @@
 package com.lolzorrior.supernaturalmod.items;
 
+import com.lolzorrior.supernaturalmod.commands.PowerCommand;
+import com.lolzorrior.supernaturalmod.networking.PowerUsePacket;
+import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +26,7 @@ public class PowerCrystalItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand iHand) {
      ItemStack item = player.getItemInHand(iHand);
      item.shrink(1);
+     SupernaturalPacketHandler.channel.sendToServer(new PowerUsePacket(2));
      return InteractionResultHolder.sidedSuccess(item, level.isClientSide());
     }
 
