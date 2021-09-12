@@ -40,7 +40,7 @@ public class ClassCommand {
         if (!(source.getEntity() instanceof Player)) {
             throw new NullPointerException("Source is not a player.");
         }
-        return source.getEntity().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass();
+        return source.getEntity().getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass();
     }
 
     private static int setClass(CommandSourceStack source, String sclass) {

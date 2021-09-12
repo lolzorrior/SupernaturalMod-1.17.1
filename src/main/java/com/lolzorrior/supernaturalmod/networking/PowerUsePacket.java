@@ -4,7 +4,6 @@ import com.lolzorrior.supernaturalmod.capabilities.ISupernaturalClass;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.network.protocol.PacketUtils;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -58,7 +57,7 @@ public class PowerUsePacket {
                                 sender.sendMessage(new TranslatableComponent("message.supernatural.not_enough_power"), sender.getUUID());
                                 return;
                             }
-                            switch (capability.getSupernaturalClass()) {
+                            switch (capability.getsClass()) {
                                 case "Werewolf": {
                                     sender.sendMessage(new TextComponent("The hunt is on!"), sender.getUUID());
                                     capability.consumePower(50);

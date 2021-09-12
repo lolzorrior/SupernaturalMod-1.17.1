@@ -19,7 +19,7 @@ public class SupernaturalClassStorage implements ICapabilitySerializable<Compoun
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag cTag = new CompoundTag();
-        cTag.putString("sClass", holder.orElseThrow(NullPointerException::new).getSupernaturalClass());
+        cTag.putString("sClass", holder.orElseThrow(NullPointerException::new).getsClass());
         cTag.putInt("sPower", holder.orElseThrow(NullPointerException::new).getPower());
         return cTag;
     }

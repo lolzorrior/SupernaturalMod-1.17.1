@@ -13,8 +13,6 @@ import org.apache.logging.log4j.Logger;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
-import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SUPERNATURAL_CLASSES_LIST;
-
 public class PowerUpdatePacket {
     private static final Logger LOGGER = LogManager.getLogger();
     int power = 0;
@@ -55,10 +53,10 @@ public class PowerUpdatePacket {
                 return;
             }
             ISupernaturalClass sclass = sender.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new);
-            String stringClass = sclass.getSupernaturalClass();
+            String stringClass = sclass.getsClass();
             if (stringClass.equals("Human")) {
                 sclass.setSupernaturalClass(msg.sClass);
-                sender.sendMessage(new TextComponent("Your class is now: " + sclass.getSupernaturalClass()), sender.getUUID());
+                sender.sendMessage(new TextComponent("Your class is now: " + sclass.getsClass()), sender.getUUID());
             }
             else if (stringClass.equals(msg.sClass)) {
                 sclass.fillPower(msg.power);

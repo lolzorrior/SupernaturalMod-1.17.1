@@ -12,14 +12,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
-public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> implements ISupernaturalClass{
+public abstract class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> implements ISupernaturalClass{
 
     @CapabilityInject(ISupernaturalClass.class)
     public static Capability<ISupernaturalClass> SCLASS = null;
 
-    protected String sClass;
     protected int sPower;
-    protected long lastSpell;
+    protected long lastSpell = 0;
 
     public static String[] SUPERNATURAL_CLASSES_LIST = {
             "Human",
@@ -42,34 +41,18 @@ public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> imp
         CapabilityManager.INSTANCE.register(ISupernaturalClass.class);
     }
 
-    public static void encode(SupernaturalClass msg, ByteBuf buf){
-        int sClassLength = buf.writeCharSequence(msg.sClass, StandardCharsets.UTF_8);
-        buf.writeInt(sClassLength);
-        buf.writeInt(msg.sPower);
+    @Override
+    public SupernaturalClass changeSupernaturalClass(SupernaturalClass classIn, SupernaturalClass newClass) {
+        newClass.sPower = classIn.sPower;
+        newClass.lastSpell = classIn.lastSpell;
+        return newClass;
     }
 
-    public static SupernaturalClass decode(ByteBuf buf){
-        return new SupernaturalClass((String) (buf.readCharSequence(buf.readInt(), StandardCharsets.UTF_8)), buf.readInt());
+    public SupernaturalClass getSupernaturalClass() {
+        return this;
     }
 
-    public static void handle(SupernaturalClass msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            // Work that needs to be threadsafe (most work)
-            Player sender = ctx.get().getSender(); // the client that sent this packet
-            // do stuff
-        });
-        ctx.get().setPacketHandled(true);
-    }
-
-    public void setSupernaturalClass(String classes) {
-        sClass = classes;
-    }
-
-    public String getSupernaturalClass() {
-        return sClass;
-    }
-
-    public long getLastSpell() {return  lastSpell;}
+    public long getLastSpell() {return lastSpell;}
 
     public void setLastSpell() {lastSpell = System.currentTimeMillis();}
 
@@ -103,25 +86,6 @@ public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> imp
         return sPower;
     }
 
-    public SupernaturalClass() {
-        setSupernaturalClass("Human");
-        setPower(0);
-    }
-
-    public SupernaturalClass(String isClass) {
-        setSupernaturalClass(isClass);
-        setPower(0);
-    }
-
-    public SupernaturalClass(String isClass, int isPower) {
-        setSupernaturalClass(isClass);
-        setPower(isPower);
-    }
 
 }
 
- class SupernaturalFactory implements Callable<ISupernaturalClass> {
-    public ISupernaturalClass call() throws Exception {
-        return new SupernaturalClass();
-    }
-}
