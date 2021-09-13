@@ -3,11 +3,13 @@ package com.lolzorrior.supernaturalmod.util;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import com.lolzorrior.supernaturalmod.capabilities.ISupernaturalClass;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
+import net.minecraftforge.common.util.LazyOptional;
 
 import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLASS;
 
@@ -27,6 +29,9 @@ public class SupernaturalClassCondition implements LootItemCondition {
 
     @Override
     public boolean test(LootContext lootContext) {
+        if (lootContext.getParam(this.enT.getParam()).getCapability(SCLASS) == null) {
+            return false;
+        }
         String cclass = lootContext.getParamOrNull(this.enT.getParam()).getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass();
         return cclass.equalsIgnoreCase(sclass);
     }

@@ -5,7 +5,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public abstract class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> implements ISupernaturalClass{
+public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> implements ISupernaturalClass{
 
     @CapabilityInject(ISupernaturalClass.class)
     public static Capability<ISupernaturalClass> SCLASS = null;
@@ -43,6 +43,11 @@ public abstract class SupernaturalClass extends ForgeRegistryEntry<SupernaturalC
 
     public SupernaturalClass getSupernaturalClass() {
         return this;
+    }
+
+    @Override
+    public String getsClass() {
+        return "Base";
     }
 
     public long getLastSpell() {return lastSpell;}

@@ -4,6 +4,7 @@ package com.lolzorrior.supernaturalmod;
 import com.lolzorrior.supernaturalmod.capabilities.ISupernaturalClass;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassStorage;
+import com.lolzorrior.supernaturalmod.capabilities.supernatural_classes.Human;
 import com.lolzorrior.supernaturalmod.capabilities.supernatural_classes.SupernaturalClassFactory;
 import com.lolzorrior.supernaturalmod.commands.ClassCommand;
 import com.lolzorrior.supernaturalmod.commands.PowerCommand;
@@ -41,6 +42,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.lolzorrior.supernaturalmod.SupernaturalMod.HUMAN;
 import static com.lolzorrior.supernaturalmod.SupernaturalMod.MOD_ID;
 import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLASS;
 
@@ -65,7 +67,7 @@ public class ForgeEventSubscriber {
         if (!(event.getObject() instanceof Player)) {return;}
         Player player = (Player) event.getObject();
         if (!(player.getCapability(SupernaturalClass.SCLASS).isPresent())){
-            event.addCapability(SupernaturalMod.SUPER_CLASS, new SupernaturalClassStorage());
+            event.addCapability(SupernaturalMod.SUPER_CLASS, new SupernaturalClassStorage(player, true));
         }
         LOGGER.info("Capabilities attached");
     }
@@ -75,8 +77,7 @@ public class ForgeEventSubscriber {
     public static void onPlayerLogsIn(PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getPlayer();
 
-        LazyOptional<ISupernaturalClass> sclassCapability = player.getCapability(SCLASS);
-        ISupernaturalClass supernaturalClass = sclassCapability.orElseThrow(NullPointerException::new);
+        ISupernaturalClass supernaturalClass = player.getCapability(SCLASS).orElseThrow(NullPointerException::new);
 
         player.sendMessage(new TextComponent("Welcome, your power is " + (supernaturalClass.getPower())), event.getEntity().getUUID());
         player.sendMessage(new TextComponent("Your class is " + supernaturalClass.getsClass()), event.getEntity().getUUID());
