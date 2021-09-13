@@ -1,16 +1,9 @@
 package com.lolzorrior.supernaturalmod.capabilities;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.Callable;
-import java.util.function.Supplier;
 
 public abstract class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> implements ISupernaturalClass{
 
@@ -85,7 +78,6 @@ public abstract class SupernaturalClass extends ForgeRegistryEntry<SupernaturalC
     public int getPower() {
         return sPower;
     }
-
 
 }
 

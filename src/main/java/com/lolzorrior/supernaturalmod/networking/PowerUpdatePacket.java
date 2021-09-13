@@ -2,6 +2,7 @@ package com.lolzorrior.supernaturalmod.networking;
 
 import com.lolzorrior.supernaturalmod.capabilities.ISupernaturalClass;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
+import com.lolzorrior.supernaturalmod.capabilities.supernatural_classes.SupernaturalClassFactory;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
@@ -52,10 +53,10 @@ public class PowerUpdatePacket {
                 LOGGER.info("This isn't the server!");
                 return;
             }
-            ISupernaturalClass sclass = sender.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new);
+            SupernaturalClass sclass = sender.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass();
             String stringClass = sclass.getsClass();
             if (stringClass.equals("Human")) {
-                sclass.setSupernaturalClass(msg.sClass);
+                sender.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(sclass , SupernaturalClassFactory.newSupernaturalClass(msg.sClass));
                 sender.sendMessage(new TextComponent("Your class is now: " + sclass.getsClass()), sender.getUUID());
             }
             else if (stringClass.equals(msg.sClass)) {

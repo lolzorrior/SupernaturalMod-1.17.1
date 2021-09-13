@@ -1,7 +1,9 @@
 package com.lolzorrior.supernaturalmod.capabilities;
 
+import com.lolzorrior.supernaturalmod.capabilities.supernatural_classes.SupernaturalClassFactory;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -12,25 +14,22 @@ import javax.annotation.Nullable;
 
 import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLASS;
 
-public class SupernaturalClassStorage implements ICapabilitySerializable<CompoundTag> {
+public class SupernaturalClassStorage implements ICapabilitySerializable<IntTag> {
 
-    private final LazyOptional<ISupernaturalClass> holder = LazyOptional.of(SupernaturalClass::new);
+    private LazyOptional<ISupernaturalClass> holder = LazyOptional.empty();
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag cTag = new CompoundTag();
-        cTag.putString("sClass", holder.orElseThrow(NullPointerException::new).getsClass());
-        cTag.putInt("sPower", holder.orElseThrow(NullPointerException::new).getPower());
-        return cTag;
+    public IntTag serializeNBT() {
+        IntTag intTag = IntTag.valueOf(holder.orElseThrow(NullPointerException::new).getPower());
+        return intTag;
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        if (!(nbt instanceof CompoundTag)) {
+    public void deserializeNBT(IntTag nbt) {
+        if (!(nbt instanceof IntTag)) {
             throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
         }
-        holder.orElseThrow(NullPointerException::new).setSupernaturalClass(nbt.getString("sClass"));
-        holder.orElseThrow(NullPointerException::new).setPower(nbt.getInt("sPower"));
+        holder.orElseThrow(NullPointerException::new).setPower(nbt.getAsInt());
     }
 
 
