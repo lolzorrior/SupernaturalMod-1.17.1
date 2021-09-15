@@ -29,7 +29,7 @@ public class SupernaturalClassCondition implements LootItemCondition {
 
     @Override
     public boolean test(LootContext lootContext) {
-        if (lootContext.getParam(this.enT.getParam()).getCapability(SCLASS) == null) {
+        if(lootContext.getParam(this.enT.getParam()).getCapability(SCLASS) == null) {
             return false;
         }
         String cclass = lootContext.getParamOrNull(this.enT.getParam()).getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass();

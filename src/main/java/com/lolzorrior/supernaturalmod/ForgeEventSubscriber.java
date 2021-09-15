@@ -14,6 +14,7 @@ import com.lolzorrior.supernaturalmod.networking.PowerUpdatePacket;
 import com.lolzorrior.supernaturalmod.networking.PowerUsePacket;
 import com.lolzorrior.supernaturalmod.networking.SupernaturalPacketHandler;
 import com.lolzorrior.supernaturalmod.util.CommonUtil;
+import com.lolzorrior.supernaturalmod.util.LazyOptionalUtil;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
@@ -42,7 +43,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.lolzorrior.supernaturalmod.SupernaturalMod.HUMAN;
 import static com.lolzorrior.supernaturalmod.SupernaturalMod.MOD_ID;
 import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass.SCLASS;
 
@@ -67,7 +67,7 @@ public class ForgeEventSubscriber {
         if (!(event.getObject() instanceof Player)) {return;}
         Player player = (Player) event.getObject();
         if (!(player.getCapability(SupernaturalClass.SCLASS).isPresent())){
-            event.addCapability(SupernaturalMod.SUPER_CLASS, new SupernaturalClassStorage(player, true));
+            event.addCapability(SupernaturalMod.SUPER_CLASS, LazyOptionalUtil.getStorage());
         }
         LOGGER.info("Capabilities attached");
     }
@@ -89,7 +89,7 @@ public class ForgeEventSubscriber {
         Player player = event.getPlayer();
         SupernaturalClass oSupernaturalClass = event.getOriginal().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass();
         int oPower = event.getOriginal().getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower();
-        player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(oSupernaturalClass, oSupernaturalClass);
+        player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(oSupernaturalClass.getsClass());
         player.getCapability(SCLASS).orElseThrow(NullPointerException::new).setPower(oPower);
     }
 
@@ -145,7 +145,7 @@ public class ForgeEventSubscriber {
         else if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass().equals("Human")) {
             String setClass = "Witch Hunter";
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-            player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(setClass));
+            player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(setClass);
             CommonUtil.PowerUpdateMessage(player);
             player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass()), event.getEntity().getUUID());
         }
@@ -162,7 +162,7 @@ public class ForgeEventSubscriber {
         }
         Player player = event.getPlayer();
         String setClass = "Human";
-        player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(setClass));
+        player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(setClass);
         player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass()), event.getPlayer().getUUID());
     }
 
@@ -189,7 +189,7 @@ public class ForgeEventSubscriber {
             int powerToAdd = 50;
             String setClass = "Demon";
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-            player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(setClass));
+            player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(setClass);
             CommonUtil.PowerUpdateMessage(player);
             player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass()), event.getEntity().getUUID());
         }
@@ -215,7 +215,7 @@ public class ForgeEventSubscriber {
             int powerToAdd = 50;
             String setClass = "Werewolf";
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-            player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(setClass));
+            player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(setClass);
             CommonUtil.PowerUpdateMessage(player);
             player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass()), event.getEntity().getUUID());
         }
@@ -237,7 +237,7 @@ public class ForgeEventSubscriber {
                 } else if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass().equals("Human")) {
                     String setClass = "Mage";
                     player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-                    player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(setClass));
+                    player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(setClass);
                     CommonUtil.PowerUpdateMessage(player);
                     player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass()), event.getEntity().getUUID());
                     event.getPlayer().getInventory().removeItem(event.getItemStack());
@@ -262,7 +262,7 @@ public class ForgeEventSubscriber {
                 } else if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass().equals("Human")) {
                     String setClass = "Warlock";
                     player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-                    player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(setClass));
+                    player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(setClass);
                     CommonUtil.PowerUpdateMessage(player);
                     player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass()), event.getEntity().getUUID());
                     event.getPlayer().getInventory().removeItem(event.getItemStack());
@@ -288,7 +288,7 @@ public class ForgeEventSubscriber {
         } else if (player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass().equals("Human")) {
             String setClass = "Monk";
             player.getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-            player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(setClass));
+            player.getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(setClass);
             CommonUtil.PowerUpdateMessage(player);
             player.sendMessage(new TextComponent("Your class is " + player.getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass()), event.getEntity().getUUID());
         }
@@ -389,7 +389,7 @@ public class ForgeEventSubscriber {
             String setClass = "Knight";
             int powerToAdd = 50;
             event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(powerToAdd);
-            event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(event.getEntity().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(setClass));
+            event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(setClass);
             CommonUtil.PowerUpdateMessage(event.getEntityMounting());
             event.getEntityMounting().sendMessage(new TextComponent("Your class is " + event.getEntityMounting().getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass()), event.getEntity().getUUID());
         }
@@ -414,7 +414,7 @@ public class ForgeEventSubscriber {
             if (event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass().equals("Human")) {
                 String setClass = "Apothecary";
                 event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).fillPower(50);
-                event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(event.getEntity().getCapability(SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(setClass));
+                event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(setClass);
                 CommonUtil.PowerUpdateMessage(event.getEntityLiving());
                 event.getEntityLiving().sendMessage(new TextComponent("Your class is " + event.getEntityLiving().getCapability(SCLASS).orElseThrow(NullPointerException::new).getsClass()), event.getEntity().getUUID());
             }

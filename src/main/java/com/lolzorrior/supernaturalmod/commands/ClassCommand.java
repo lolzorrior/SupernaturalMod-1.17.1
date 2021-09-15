@@ -2,7 +2,9 @@ package com.lolzorrior.supernaturalmod.commands;
 
 import com.lolzorrior.supernaturalmod.capabilities.ISupernaturalClass;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
+import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassStorage;
 import com.lolzorrior.supernaturalmod.capabilities.supernatural_classes.SupernaturalClassFactory;
+import com.lolzorrior.supernaturalmod.util.LazyOptionalUtil;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
@@ -51,8 +53,7 @@ public class ClassCommand {
         if (!(source.getEntity() instanceof Player)) {
             throw new NullPointerException("Source is not a player.");
         }
-        ISupernaturalClass superclass = source.getEntity().getCapability(SCLASS).orElseThrow(NullPointerException::new);
-        superclass.changeSupernaturalClass(superclass.getSupernaturalClass(), SupernaturalClassFactory.newSupernaturalClass(sclass));
+        source.getEntity().getCapability(SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(sclass);
         String i = getClass(source);
         source.getEntity().sendMessage(new TranslatableComponent("commands.supernaturalmod.class.set", i), source.getEntity().getUUID());
         return 0;

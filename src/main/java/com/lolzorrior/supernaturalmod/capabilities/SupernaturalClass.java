@@ -1,8 +1,12 @@
 package com.lolzorrior.supernaturalmod.capabilities;
 
+import com.lolzorrior.supernaturalmod.capabilities.supernatural_classes.SupernaturalClassFactory;
+import com.lolzorrior.supernaturalmod.util.LazyOptionalUtil;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> implements ISupernaturalClass{
@@ -35,10 +39,9 @@ public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> imp
     }
 
     @Override
-    public SupernaturalClass changeSupernaturalClass(SupernaturalClass classIn, SupernaturalClass newClass) {
-        newClass.sPower = classIn.sPower;
-        newClass.lastSpell = classIn.lastSpell;
-        return newClass;
+    public void changeSupernaturalClass(String sClass) {
+        int powerin = LazyOptionalUtil.getStorage().getCapability(SCLASS).orElseThrow(NullPointerException::new).getPower();
+        LazyOptionalUtil.getStorage().setCapability(sClass, powerin);
     }
 
     public SupernaturalClass getSupernaturalClass() {

@@ -56,7 +56,7 @@ public class PowerUpdatePacket {
             SupernaturalClass sclass = sender.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).getSupernaturalClass();
             String stringClass = sclass.getsClass();
             if (stringClass.equals("Human")) {
-                sender.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(sclass , SupernaturalClassFactory.newSupernaturalClass(msg.sClass));
+                sender.getCapability(SupernaturalClass.SCLASS).orElseThrow(NullPointerException::new).changeSupernaturalClass(stringClass);
                 sender.sendMessage(new TextComponent("Your class is now: " + sclass.getsClass()), sender.getUUID());
             }
             else if (stringClass.equals(msg.sClass)) {

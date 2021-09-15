@@ -1,5 +1,7 @@
 package com.lolzorrior.supernaturalmod.capabilities;
 
+import net.minecraft.world.entity.Entity;
+
 public interface ISupernaturalClass {
 
     void consumePower(int points);
@@ -8,7 +10,8 @@ public interface ISupernaturalClass {
     int getPower();
     void setLastSpell();
     long getLastSpell();
-    SupernaturalClass changeSupernaturalClass(SupernaturalClass classIn, SupernaturalClass newClass);
+    void changeSupernaturalClass(String sClassIn);
     SupernaturalClass getSupernaturalClass();
     String getsClass();
+
 }
