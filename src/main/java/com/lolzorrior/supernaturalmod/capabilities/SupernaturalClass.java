@@ -3,13 +3,14 @@ package com.lolzorrior.supernaturalmod.capabilities;
 import com.lolzorrior.supernaturalmod.capabilities.supernatural_classes.SupernaturalClassFactory;
 import com.lolzorrior.supernaturalmod.util.LazyOptionalUtil;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> implements ISupernaturalClass{
+public abstract class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> implements ISupernaturalClass{
 
     @CapabilityInject(ISupernaturalClass.class)
     public static Capability<ISupernaturalClass> SCLASS = null;
@@ -87,5 +88,6 @@ public class SupernaturalClass extends ForgeRegistryEntry<SupernaturalClass> imp
         return sPower;
     }
 
+    public abstract void castLevelOneSpell(Player player);
 }
 

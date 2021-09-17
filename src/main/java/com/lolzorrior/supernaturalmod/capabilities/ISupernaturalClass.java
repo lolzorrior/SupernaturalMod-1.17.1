@@ -1,6 +1,7 @@
 package com.lolzorrior.supernaturalmod.capabilities;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 public interface ISupernaturalClass {
 
@@ -13,5 +14,5 @@ public interface ISupernaturalClass {
     void changeSupernaturalClass(String sClassIn);
     SupernaturalClass getSupernaturalClass();
     String getsClass();
-
+    void castLevelOneSpell(Player player);
 }
